@@ -1,0 +1,10 @@
+Package: bycatchEstimatorStan
+Title: Bayesian Bycatch Estimation with STAN
+Version: 0.0.0.9000
+Authors@R: 
+    person("Elizabeth", "Babcock", , "ebabcock@miami.edu", role = c("aut", "cre"))
+Description: This package is designed to run with BycatchEstimator, and adds a Bayesian option to bycatch estimation using the STAN via cmdstanr or rstan. 
+License: `use_mit_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
