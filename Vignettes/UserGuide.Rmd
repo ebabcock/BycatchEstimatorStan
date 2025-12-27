@@ -1,0 +1,254 @@
+---
+title: "BycatchEstimatorStan User Guide"
+author: "Beth Babcock"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+This library runs a Bayesian version of the model-based bycatch estimation procudure in the library BycatchEstimator. See the BycatchEstimator User's Guide for how to set up the data at https://ebabcock.github.io/BycatchEstimator/. The source code is at https://github.com/ebabcock/BycatchEstimator
+
+To install, use the following code:
+
+```{r}
+# install.packages("devtools")
+#devtools::install_github("ebabcock/BycatchEstimator")
+#devtools::install_github("ebabcock/BycatchEstimatorStan")
+evalOption<-FALSE
+```
+
+Open all the libraries
+
+```{r, eval = evalOption}
+library(BycatchEstimator)
+library(MuMIn)
+library(BycatchEstimatorStan)
+# library(gridExtra)
+# library(rstan)
+# library(cmdstanr)
+# library(loo)
+# library(shinystan)
+# library(ggmcmc)
+# library(readxl)
+# library(bayesplot)
+# library(ggsci)
+# library(flextable)
+theme_set(theme_bw())
+
+#source("~/github/bycatchEstimatorStan/R/printStanCode.r")
+#source("~/github/bycatchEstimatorStan/R/bycatchStan.r")
+```
+
+Run example code from BycatchEstimator
+
+```{r, eval = evalOption}
+obsdat<-droplevels(LLSIM_BUM_Example_observer[LLSIM_BUM_Example_observer$Year>2014 &LLSIM_BUM_Example_observer$fleet==2,])
+logdat<-droplevels(LLSIM_BUM_Example_logbook[LLSIM_BUM_Example_logbook$Year>2014 & LLSIM_BUM_Example_logbook$fleet==2,])
+setupObjBUM<-bycatchSetup(
+  obsdat = obsdat,
+  logdat = logdat,
+  yearVar = "Year",
+  obsEffort = "hooks",
+  logEffort = "hooks",
+  factorVariables = c("Year","area"),  
+  numericVariables = NA, 
+  EstimateBycatch = TRUE,
+  logNum = NA,
+  sampleUnit = "trips",
+  baseDir = getwd(),
+  runName = "LLSIMBUMtripExample",
+  runDescription = "LLSIm BUM by trip, with 5% observer coverage",
+  common = "Blue marlin",
+  sp = "Makaira nigricans",
+  obsCatch ="BUM",
+  catchUnit = "number",
+  catchType = "catch",
+  reportType = "html"  
+)
+```
+
+Look at the output html file to see whether there are any problems with your data setup. 
+
+Now run BycatchStan
+
+```{r, eval = evalOption}
+modelsToRun<-c("y~Year","y~1")
+useCode="cmdstanr"
+BUMRun<-bycatchStanSim(setupObjBUM,
+                        modelsToRun=modelsToRun,
+                        spNum=1,  #which species to run in input is multispecies
+                        modeledEffort=FALSE,
+                        priors =  list(interceptSD=10,
+                                      coefficientSD=1,
+                                      phiType=c("exponential","normal")[1],
+                                      phiPar=1),
+                        StanOutDir=NULL,  #Null to use base directory from SetupObj
+                        useCode=useCode)
+
+```
+
+The bycatchStanSim function prints its output to and rds file, so you can read it back in later to make plots and look at diagnostics. 
+
+```{r, eval = evalOption}
+#Specify directory with bycatch Estimator results
+outDir<-setupObjBUM$bycatchInputs$outDir
+# Date of bycatch estimator run
+estimatorDate<-Sys.Date()
+# Date of stan run
+stanDate<-Sys.Date()
+# Read in bycatchEstimator setup
+setupObj<-readRDS(paste0(outDir,"/",estimatorDate,"_BycatchSetupSpecification.rds"))
+spNum<-1
+#Stan output directory
+StanOutDir<-paste0(outDir,"/","Bluemarlincatch")
+# Read in stan run summary files
+stanSum<-readRDS(paste0(StanOutDir,
+                         "/",stanDate,"StanOutputs.rds"))
+```
+
+The following code takes either the output that was just read in or the outputs from this section and looks at more diagnostics.
+
+```{r, eval = evalOption}
+#Choose outputs to use
+stanSum<-BUMRun
+setupObj<-setupObjBUM
+```
+
+Plot the annual bycatch estimates
+
+```{r, eval = evalOption}
+plotStan(stanSum$yearSum)
+```
+
+Here is the model selection table
+
+```{r, eval = evalOption}
+stanSum$waictab
+```
+
+Pick AIC best model
+
+```{r, eval = evalOption}
+modelNum<-which(stanSum$waictab$Dwaic==0) #To get WAIC best
+```
+
+Read in the corresponding Stan model object (these are deleted from the environment to save space)
+
+```{r, eval = evalOption}
+stanObj<-readRDS(BUMRun$stanRunFiles[[modelNum]])
+```
+
+Plot residuals
+```{r, eval = evalOption}
+getResiduals(stanSum, 
+             stanObj,
+             modelNum,
+             setupObj,
+             useCode=useCode)
+```
+
+Plot prior and posterior densities of parameters
+
+```{r, eval = evalOption}
+plotPriorPosterior(stanSum, 
+                   stanObj,
+                   useCode=useCode) 
+```
+
+Plot prior and posterior draws of bycatch 
+
+```{r, eval = evalOption}
+plotPriorPosteriorSims(stanSum,
+                       modelNum,
+                       stanObj,
+                       setupObj,
+                       modeledEffort = FALSE,
+                       effortSD = NULL,
+                       useCode=useCode)  
+```
+
+
+Convergence diagnostics
+
+```{r, eval = evalOption}
+getConvergence(stanObj,
+               useCode=useCode)
+```
+
+Parameter summary table
+
+```{r, eval = evalOption}
+getSummary(stanSum,
+           stanObj,
+           modelNum,
+           setupObj,
+           spNum=1,
+           useCode=useCode) 
+```
+
+## Code to run mortality model 
+
+
+With simulated survival data (arbitrary values)
+
+```{r, eval = evalOption}
+mortData<-read.csv("data/SimulatedMortality.csv")
+mortData<-standardizeToObsdat(obsdat,mortData,numericVariables="Year")
+#with no prediction
+modelsToRun=c("y~1","y~Species","y~Year","y~Year+Species","y~Year:Species")
+MortResults<-mortalityStan(mortData=mortData,
+                          predData = NULL,
+                          modelsToRun=modelsToRun,
+                          aliveColumn="alive",
+                          outDir=getwd(),
+                          runName="Simulated",
+                          predictP=FALSE,  
+                          useCode=useCode  
+)
+```
+
+The outputs are in a similar format.
+
+```{r, eval = evalOption}
+MortResults$waictab
+MortResults$waictab
+MortResults$diagTable
+mortModelNum<-which(MortResults$waictab$Dwaic==0)
+```
+
+With predictions for each year for BUM, best model only
+
+```{r, eval = evalOption}
+predData<-obsdat %>%
+  mutate(Species="BUM",
+         Species=factor("BUM",levels=c("BUM","SWO"))) %>%
+  distinct(Species,Year)
+dim(predData)
+predData
+MortResultsP<-mortalityStan(mortData=mortData,
+                           predData = predData,
+                           modelsToRun=modelsToRun[mortModelNum],
+                           aliveColumn="alive",
+                           outDir=getwd(),
+                           runName="Simulated",
+                           predictP=TRUE,  
+                           useCode=useCode  
+)
+```
+
+## Combine mortality and bycatch estimate to get bycatch mortality
+Not working yeat
+
+```{r, eval = evalOption}
+mortalityEsts<-getMortPred(stanSum=stanSum,
+                           modelNum=which(stanSum$waictab$Dwaic==0),
+                           stanObj=stanObj,
+                           Species="BUM",
+                           setupObj=setupObj,
+                           modeledEffort = FALSE,
+                           effortSD = NULL,
+                           useCode=useCode,
+                           mortResults=MortResultsP,
+                           mortModelNum=which(MortResultsP$waictab$Dwaic==0))
+plotMortalityFunc(mortalityEsts,Species="BUM")
+head(mortalityEsts)
+```
