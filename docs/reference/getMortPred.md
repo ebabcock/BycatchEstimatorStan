@@ -1,0 +1,72 @@
+# GetMorPred
+
+GetMorPred
+
+## Usage
+
+``` r
+getMortPred(
+  stanSum,
+  modelNum,
+  Species,
+  stanObj,
+  setupObj,
+  modeledEffort = FALSE,
+  effortSD = NULL,
+  useCode,
+  mortResults,
+  mortModelNum,
+  nsim = 1000,
+  summaryVariables = "Year"
+)
+```
+
+## Arguments
+
+- stanSum:
+
+  WAIC table
+
+- modelNum:
+
+  Row in waictab
+
+- Species:
+
+  Species
+
+- stanObj:
+
+  Stan model ouput for bycatch model
+
+- setupObj:
+
+  Daa setup object
+
+- modeledEffort:
+
+  TRUE if effort is drawn from a distribution
+
+- effortSD:
+
+  Name of column with effort data
+
+- useCode:
+
+  cmdstanr or rsta
+
+- mortResults:
+
+  stan run of motality model
+
+- mortModelNum:
+
+  mortality model number to use
+
+- nsim:
+
+  Number of draws needed
+
+- summaryVariables:
+
+  Defaults to Year to get annual bycatch mortality

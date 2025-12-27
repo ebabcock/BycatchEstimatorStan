@@ -1,0 +1,26 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/404.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/articles/index.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/articles/UserGuide.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/authors.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/index.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/bycatchEstimatorStan-package.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/bycatchStanSim.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getBycatchDraws.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getBycatchSim.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getConvergence.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getIC.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getMeanNbinom.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getMortPred.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getResiduals.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getSummary.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/index.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/mortalityStan.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/plotMortalityFunc.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/plotPriorPosterior.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/plotPriorPosteriorSims.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/plotStan.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/priorSimulation.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/standardizeToObsdat.html</loc></url>
+</urlset>
+
