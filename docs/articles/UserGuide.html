@@ -55,7 +55,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>BycatchEstimatorStan User Guide</h1>
-                        <h4 data-toc-skip class="author">Beth
+                        <h4 data-toc-skip class="author">Elizabeth A.
 Babcock</h4>
             
             <h4 data-toc-skip class="date">2025-12-29</h4>
@@ -71,7 +71,12 @@ estimation procudure in the library BycatchEstimator. See the
 BycatchEstimator User’s Guide for how to set up the data at <a href="https://ebabcock.github.io/BycatchEstimator/" class="external-link uri">https://ebabcock.github.io/BycatchEstimator/</a>. The source
 code is at <a href="https://github.com/ebabcock/BycatchEstimatorStan" class="external-link uri">https://github.com/ebabcock/BycatchEstimatorStan</a> and the
 User’s Guide for the Bayesian version is at <a href="https://ebabcock.github.io/BycatchEstimatorStan/" class="uri">https://ebabcock.github.io/BycatchEstimatorStan/</a>.</p>
-<p>To install, use the following code:</p>
+<p>The code requires either cmdstanr (<span class="citation">Gabry et
+al. (2025)</span>) or rstan (<span class="citation">Stan Development
+Team (2025)</span>) to run the MCMC algorithm, preferably cmdstanr. You
+must install cmdstanr before you install BycatchEstimatorStan, following
+the instructions here <a href="https://mc-stan.org/cmdstanr/" class="external-link uri">https://mc-stan.org/cmdstanr/</a>.</p>
+<p>To install BycatchEstimatorStan, use the following code:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ebabcock/BycatchEstimator"</span><span class="op">)</span></span>
@@ -259,6 +264,16 @@ survival</p>
 <span></span>
 <span><span class="fu"><a href="../reference/plotMortalityFunc.html">plotMortalityFunc</a></span><span class="op">(</span><span class="va">mortalityEsts</span>,Species<span class="op">=</span><span class="st">"BUM"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mortalityEsts</span><span class="op">)</span></span></code></pre></div>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-cmdstanr" class="csl-entry">
+Gabry, Jonah, Rok Češnovar, Andrew Johnson, and Steve Bronder. 2025.
+<em>Cmdstanr: R Interface to ’CmdStan’</em>. <a href="https://mc-stan.org/cmdstanr/" class="external-link">https://mc-stan.org/cmdstanr/</a>.
+</div>
+<div id="ref-RStan" class="csl-entry">
+Stan Development Team. 2025. <span>“<span>RStan</span>: The
+<span>R</span> Interface to <span>Stan</span>.”</span> <a href="https://mc-stan.org/" class="external-link">https://mc-stan.org/</a>.
+</div>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

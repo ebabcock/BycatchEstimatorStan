@@ -8,7 +8,12 @@ BycatchEstimator User’s Guide for how to set up the data at
 for the Bayesian version is at
 <https://ebabcock.github.io/BycatchEstimatorStan/>.
 
-To install, use the following code:
+The code requires either cmdstanr (Gabry et al. (2025)) or rstan (Stan
+Development Team (2025)) to run the MCMC algorithm, preferably cmdstanr.
+You must install cmdstanr before you install BycatchEstimatorStan,
+following the instructions here <https://mc-stan.org/cmdstanr/>.
+
+To install BycatchEstimatorStan, use the following code:
 
 ``` r
 # install.packages("devtools")
@@ -261,3 +266,9 @@ mortalityEsts<-getMortPred(stanSum=stanSum,
 plotMortalityFunc(mortalityEsts,Species="BUM")
 head(mortalityEsts)
 ```
+
+Gabry, Jonah, Rok Češnovar, Andrew Johnson, and Steve Bronder. 2025.
+*Cmdstanr: R Interface to ’CmdStan’*. <https://mc-stan.org/cmdstanr/>.
+
+Stan Development Team. 2025. “RStan: The R Interface to Stan.”
+<https://mc-stan.org/>.
