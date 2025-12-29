@@ -58,7 +58,7 @@
                         <h4 data-toc-skip class="author">Beth
 Babcock</h4>
             
-            <h4 data-toc-skip class="date">2025-12-26</h4>
+            <h4 data-toc-skip class="date">2025-12-29</h4>
       
 
       <div class="d-none name"><code>UserGuide.Rmd</code></div>
@@ -69,32 +69,18 @@ Babcock</h4>
 <p>This library runs a Bayesian version of the model-based bycatch
 estimation procudure in the library BycatchEstimator. See the
 BycatchEstimator User’s Guide for how to set up the data at <a href="https://ebabcock.github.io/BycatchEstimator/" class="external-link uri">https://ebabcock.github.io/BycatchEstimator/</a>. The source
-code is at <a href="https://github.com/ebabcock/BycatchEstimator" class="external-link uri">https://github.com/ebabcock/BycatchEstimator</a></p>
+code is at <a href="https://github.com/ebabcock/BycatchEstimatorStan" class="external-link uri">https://github.com/ebabcock/BycatchEstimatorStan</a> and the
+User’s Guide for the Bayesian version is at <a href="https://ebabcock.github.io/BycatchEstimatorStan/" class="uri">https://ebabcock.github.io/BycatchEstimatorStan/</a>.</p>
 <p>To install, use the following code:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="co">#devtools::install_github("ebabcock/BycatchEstimator")</span></span>
-<span><span class="co">#devtools::install_github("ebabcock/BycatchEstimatorStan")</span></span>
-<span><span class="va">evalOption</span><span class="op">&lt;-</span><span class="cn">FALSE</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ebabcock/BycatchEstimator"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ebabcock/BycatchEstimatorStan"</span><span class="op">)</span></span></code></pre></div>
 <p>Open all the libraries</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ebabcock.github.io/BycatchEstimator/" class="external-link">BycatchEstimator</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">MuMIn</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">BycatchEstimatorStan</span><span class="op">)</span></span>
-<span><span class="co"># library(gridExtra)</span></span>
-<span><span class="co"># library(rstan)</span></span>
-<span><span class="co"># library(cmdstanr)</span></span>
-<span><span class="co"># library(loo)</span></span>
-<span><span class="co"># library(shinystan)</span></span>
-<span><span class="co"># library(ggmcmc)</span></span>
-<span><span class="co"># library(readxl)</span></span>
-<span><span class="co"># library(bayesplot)</span></span>
-<span><span class="co"># library(ggsci)</span></span>
-<span><span class="co"># library(flextable)</span></span>
-<span><span class="fu">theme_set</span><span class="op">(</span><span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#source("~/github/bycatchEstimatorStan/R/printStanCode.r")</span></span>
-<span><span class="co">#source("~/github/bycatchEstimatorStan/R/bycatchStan.r")</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">BycatchEstimatorStan</span><span class="op">)</span></span></code></pre></div>
 <p>Run example code from BycatchEstimator</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">obsdat</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/droplevels.html" class="external-link">droplevels</a></span><span class="op">(</span><span class="va">LLSIM_BUM_Example_observer</span><span class="op">[</span><span class="va">LLSIM_BUM_Example_observer</span><span class="op">$</span><span class="va">Year</span><span class="op">&gt;</span><span class="fl">2014</span> <span class="op">&amp;</span><span class="va">LLSIM_BUM_Example_observer</span><span class="op">$</span><span class="va">fleet</span><span class="op">==</span><span class="fl">2</span>,<span class="op">]</span><span class="op">)</span></span>
@@ -103,8 +89,8 @@ code is at <a href="https://github.com/ebabcock/BycatchEstimator" class="externa
 <span>  obsdat <span class="op">=</span> <span class="va">obsdat</span>,</span>
 <span>  logdat <span class="op">=</span> <span class="va">logdat</span>,</span>
 <span>  yearVar <span class="op">=</span> <span class="st">"Year"</span>,</span>
-<span>  obsEffort <span class="op">=</span> <span class="st">"hooks"</span>,</span>
-<span>  logEffort <span class="op">=</span> <span class="st">"hooks"</span>,</span>
+<span>  obsEffort <span class="op">=</span> <span class="st">"sets"</span>,</span>
+<span>  logEffort <span class="op">=</span> <span class="st">"sets"</span>,</span>
 <span>  factorVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Year"</span>,<span class="st">"area"</span><span class="op">)</span>,  </span>
 <span>  numericVariables <span class="op">=</span> <span class="cn">NA</span>, </span>
 <span>  EstimateBycatch <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -124,10 +110,155 @@ code is at <a href="https://github.com/ebabcock/BycatchEstimator" class="externa
 with your data setup.</p>
 <p>Now run BycatchStan</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotStan.html">plotStan</a></span><span class="op">(</span><span class="va">BUMRun</span><span class="op">$</span><span class="va">yearSum</span><span class="op">)</span></span></code></pre></div>
-<p>Here is the model selection table</p>
+<code class="sourceCode R"><span><span class="va">modelsToRun</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y~Year"</span>,<span class="st">"y~1"</span><span class="op">)</span></span>
+<span><span class="va">useCode</span><span class="op">=</span><span class="st">"cmdstanr"</span></span>
+<span><span class="va">BUMRun</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/bycatchStanSim.html">bycatchStanSim</a></span><span class="op">(</span><span class="va">setupObjBUM</span>,</span>
+<span>                        modelsToRun<span class="op">=</span><span class="va">modelsToRun</span>,</span>
+<span>                        spNum<span class="op">=</span><span class="fl">1</span>,  <span class="co">#which species to run in input is multispecies</span></span>
+<span>                        modeledEffort<span class="op">=</span><span class="cn">FALSE</span>,</span>
+<span>                        priors <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>interceptSD<span class="op">=</span><span class="fl">10</span>,</span>
+<span>                                      coefficientSD<span class="op">=</span><span class="fl">1</span>,</span>
+<span>                                      phiType<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exponential"</span>,<span class="st">"normal"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>                                      phiPar<span class="op">=</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>                        StanOutDir<span class="op">=</span><span class="cn">NULL</span>,  <span class="co">#Null to use base directory from SetupObj</span></span>
+<span>                        useCode<span class="op">=</span><span class="va">useCode</span><span class="op">)</span></span></code></pre></div>
+<p>The bycatchStanSim function prints its output to an rds file, so you
+can read it back in later to make plots and look at diagnostics.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">BUMRun</span><span class="op">$</span><span class="va">waictab</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#Specify directory with bycatch Estimator results</span></span>
+<span><span class="va">outDir</span><span class="op">&lt;-</span><span class="va">setupObjBUM</span><span class="op">$</span><span class="va">bycatchInputs</span><span class="op">$</span><span class="va">outDir</span></span>
+<span><span class="co"># Date of bycatch estimator run</span></span>
+<span><span class="va">estimatorDate</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Date of stan run</span></span>
+<span><span class="va">stanDate</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Read in bycatchEstimator setup</span></span>
+<span><span class="va">setupObj</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">outDir</span>,<span class="st">"/"</span>,<span class="va">estimatorDate</span>,<span class="st">"_BycatchSetupSpecification.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">spNum</span><span class="op">&lt;-</span><span class="fl">1</span></span>
+<span><span class="co">#Stan output directory</span></span>
+<span><span class="va">StanOutDir</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">outDir</span>,<span class="st">"/"</span>,<span class="st">"Bluemarlincatch"</span><span class="op">)</span></span>
+<span><span class="co"># Read in stan run summary files</span></span>
+<span><span class="va">stanSum</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">StanOutDir</span>,</span>
+<span>                         <span class="st">"/STAN"</span>,<span class="va">stanDate</span>,<span class="st">"StanOutputs.rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The following code takes either the output that was just read in or
+the outputs from this section and looks at more diagnostics.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#Choose outputs to use</span></span>
+<span><span class="va">stanSum</span><span class="op">&lt;-</span><span class="va">BUMRun</span></span>
+<span><span class="va">setupObj</span><span class="op">&lt;-</span><span class="va">setupObjBUM</span></span></code></pre></div>
+<p>Plot the annual bycatch estimates</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotStan.html">plotStan</a></span><span class="op">(</span><span class="va">stanSum</span><span class="op">$</span><span class="va">yearSum</span><span class="op">)</span></span></code></pre></div>
+<p>Here is the model selection table</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">stanSum</span><span class="op">$</span><span class="va">waictab</span></span></code></pre></div>
+<p>Pick AIC best model</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">modelNum</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">stanSum</span><span class="op">$</span><span class="va">waictab</span><span class="op">$</span><span class="va">Dwaic</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="co">#To get WAIC best</span></span></code></pre></div>
+<p>Read in the corresponding Stan model object (these are deleted from
+the environment to save space)</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">stanObj</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">BUMRun</span><span class="op">$</span><span class="va">stanRunFiles</span><span class="op">[[</span><span class="va">modelNum</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p>Plot residuals</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getResiduals.html">getResiduals</a></span><span class="op">(</span><span class="va">stanSum</span>, </span>
+<span>             <span class="va">stanObj</span>,</span>
+<span>             <span class="va">modelNum</span>,</span>
+<span>             <span class="va">setupObj</span>,</span>
+<span>             useCode<span class="op">=</span><span class="va">useCode</span><span class="op">)</span></span></code></pre></div>
+<p>Plot prior and posterior densities of parameters</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPriorPosterior.html">plotPriorPosterior</a></span><span class="op">(</span><span class="va">stanSum</span>, </span>
+<span>                   <span class="va">stanObj</span>,</span>
+<span>                   useCode<span class="op">=</span><span class="va">useCode</span><span class="op">)</span> </span></code></pre></div>
+<p>Plot prior and posterior draws of bycatch</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPriorPosteriorSims.html">plotPriorPosteriorSims</a></span><span class="op">(</span>stanSum<span class="op">=</span><span class="va">stanSum</span>,</span>
+<span>                       modelNum<span class="op">=</span><span class="va">modelNum</span>,</span>
+<span>                       stanObj<span class="op">=</span><span class="va">stanObj</span>,</span>
+<span>                       setupObj<span class="op">=</span><span class="va">setupObj</span>,</span>
+<span>                       modeledEffort <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                       effortSD <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                       useCode<span class="op">=</span><span class="va">useCode</span><span class="op">)</span>  </span></code></pre></div>
+<p>Convergence diagnostics</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getConvergence.html">getConvergence</a></span><span class="op">(</span><span class="va">stanObj</span>,</span>
+<span>               useCode<span class="op">=</span><span class="va">useCode</span><span class="op">)</span></span></code></pre></div>
+<p>Parameter summary table</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getSummary.html">getSummary</a></span><span class="op">(</span><span class="va">stanSum</span>,</span>
+<span>           <span class="va">stanObj</span>,</span>
+<span>           <span class="va">modelNum</span>,</span>
+<span>           <span class="va">setupObj</span>,</span>
+<span>           spNum<span class="op">=</span><span class="fl">1</span>,</span>
+<span>           useCode<span class="op">=</span><span class="va">useCode</span><span class="op">)</span> </span></code></pre></div>
+<p>Code to run survival/mortality model</p>
+<p>With simulated survival data (arbitrary values). If there are any
+numerical variables, they need to be standardized using the mean and sd
+from the observer data for consistency. This data has year as a
+category, so standardization is not needed.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mortData</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"data/SimulatedMortality.csv"</span><span class="op">)</span></span></code></pre></div>
+<p>Run multiple models to get the best one. Doesn’t calculate predicted
+probability of survival (predictP=FALSE)</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">modelsToRun</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y~1"</span>,<span class="st">"y~Species"</span>,<span class="st">"y~Year"</span>,<span class="st">"y~Year+Species"</span><span class="op">)</span></span>
+<span><span class="va">MortResults</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/mortalityStan.html">mortalityStan</a></span><span class="op">(</span>mortData<span class="op">=</span><span class="va">mortData</span>,</span>
+<span>                          predData <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                          modelsToRun<span class="op">=</span><span class="va">modelsToRun</span>,</span>
+<span>                          factorVariables<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Species"</span>,<span class="st">"Year"</span><span class="op">)</span>,</span>
+<span>                          numericVariables<span class="op">=</span><span class="cn">NA</span>,</span>
+<span>                          mortalityColumn<span class="op">=</span><span class="st">"dead"</span>,</span>
+<span>                          outDir<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                          runName<span class="op">=</span><span class="st">"Simulated"</span>,</span>
+<span>                          predictP<span class="op">=</span><span class="cn">FALSE</span>,</span>
+<span>                          useCode<span class="op">=</span><span class="va">useCode</span>  </span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The outputs include the model selection and diagnostics tables.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">MortResults</span><span class="op">$</span><span class="va">waictab</span></span>
+<span><span class="va">MortResults</span><span class="op">$</span><span class="va">diagTable</span></span>
+<span><span class="va">mortModelNum</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">MortResults</span><span class="op">$</span><span class="va">waictab</span><span class="op">$</span><span class="va">Dwaic</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>This function will give posterior predictive checks for the
+probability model.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPPCMortality.html">plotPPCMortality</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">mortData</span><span class="op">$</span><span class="va">dead</span>,</span>
+<span>                       modelNum<span class="op">=</span><span class="fl">1</span>,</span>
+<span>                       mortalityStanList<span class="op">=</span><span class="va">MortResults</span><span class="op">$</span><span class="va">stanRuns</span>,</span>
+<span>                       useCode<span class="op">=</span><span class="va">useCode</span><span class="op">)</span>  </span></code></pre></div>
+<p>With predictions for each year for BUM, best model only</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">predData</span><span class="op">&lt;-</span><span class="va">obsdat</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">distinct</span><span class="op">(</span><span class="va">Year</span><span class="op">)</span><span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>Species<span class="op">=</span><span class="st">"BUM"</span><span class="op">)</span></span>
+<span><span class="va">predData</span></span>
+<span><span class="va">MortResultsP</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/mortalityStan.html">mortalityStan</a></span><span class="op">(</span>mortData<span class="op">=</span><span class="va">mortData</span>,</span>
+<span>                           predData <span class="op">=</span> <span class="va">predData</span>,</span>
+<span>                           modelsToRun<span class="op">=</span><span class="va">modelsToRun</span><span class="op">[</span><span class="va">mortModelNum</span><span class="op">]</span>,</span>
+<span>                           factorVariables<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Species"</span>,<span class="st">"Year"</span><span class="op">)</span>,</span>
+<span>                           numericVariables<span class="op">=</span><span class="cn">NA</span>,</span>
+<span>                           mortalityColumn<span class="op">=</span><span class="st">"dead"</span>,</span>
+<span>                           outDir<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                           runName<span class="op">=</span><span class="st">"Simulated"</span>,</span>
+<span>                           predictP<span class="op">=</span><span class="cn">TRUE</span>,  </span>
+<span>                           useCode<span class="op">=</span><span class="va">useCode</span>  </span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Combine mortality and bycatch estimate to get bycatch mortality or
+survival</p>
+<p>Estimates total bycatch mortality</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mortalityEsts</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getMortPred.html">getMortPred</a></span><span class="op">(</span>stanSum<span class="op">=</span><span class="va">stanSum</span>,</span>
+<span>                           modelNum<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">stanSum</span><span class="op">$</span><span class="va">waictab</span><span class="op">$</span><span class="va">Dwaic</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span>,</span>
+<span>                           stanObj<span class="op">=</span><span class="va">stanObj</span>,</span>
+<span>                           Species<span class="op">=</span><span class="st">"BUM"</span>,</span>
+<span>                           setupObj<span class="op">=</span><span class="va">setupObj</span>,</span>
+<span>                           modeledEffort <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                           effortSD <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                           useCode<span class="op">=</span><span class="va">useCode</span>,</span>
+<span>                           mortResults<span class="op">=</span><span class="va">MortResultsP</span>,</span>
+<span>                          mortModelNum<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/plotMortalityFunc.html">plotMortalityFunc</a></span><span class="op">(</span><span class="va">mortalityEsts</span>,Species<span class="op">=</span><span class="st">"BUM"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mortalityEsts</span><span class="op">)</span></span></code></pre></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

@@ -24,9 +24,9 @@ plotPriorPosteriorSims(
 
 \item{setupObj}{The BycatchEstimator setup object}
 
-\item{modeledEffort}{TRE if effort is drawn from a normal}
+\item{modeledEffort}{TRUE if effort is drawn from a normal}
 
-\item{effortSD}{Effort SD column in obsdat if drawing from noraml}
+\item{effortSD}{Effort SD column in obsdat if drawing from normal}
 
 \item{useCode}{"cmdstanr" or "rstan"}
 }

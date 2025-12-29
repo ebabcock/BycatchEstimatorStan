@@ -1,15 +1,15 @@
-library(tidyverse)
-library(BycatchEstimator)
-library(MuMIn)
-library(gridExtra)
-library(rstan)
-library(loo)
-library(shinystan)
-library(ggmcmc)
-library(readxl)
-library(bayesplot)
-library(ggsci)
-library(flextable)
+require(tidyverse)
+require(BycatchEstimator)
+require(MuMIn)
+require(gridExtra)
+require(rstan)
+require(loo)
+require(shinystan)
+require(ggmcmc)
+require(readxl)
+require(bayesplot)
+require(ggsci)
+require(flextable)
 theme_set(theme_bw())
 
 #' getIC
@@ -56,10 +56,12 @@ plotStan <- function(yearSum) {
 #' mortalityStan
 #' Function to run binomial stan models to estimate probability of survival
 #'
-#' @param mortData Data frame to fit model with a variable called alive with 1 for survive, 0 for dead plus predictor varialbes.
-#' @param predData Data frame to predict mortalities for if desired
+#' @param mortData Data frame to fit model with a variable called mortality with 1 for dead, 0 for alive plus predictor variables.
+#' @param predData Data frame to predict mortalities for if desired. If null, uses all distinct rows of the fitting data
 #' @param modelsToRun  Character vector of models
-#' @param aliveColumn Name of column containing 1/0 for alive/dead
+#' @param FactorVariables Variables to interpret as categorical
+#' @param Numericvariables Variable to interpret as numerical
+#' @param mortalityColumn Name of column containing 1/0 for dead/alive
 #' @param outDir output directory
 #' @param runName run name
 #' @param predictP TRUE/FALSE, do we want to predict to new data?
@@ -70,7 +72,9 @@ plotStan <- function(yearSum) {
 mortalityStan <- function(mortData,
                           predData = NULL,
                           modelsToRun,
-                          aliveColumn,
+                          factorVariables=NA,
+                          numericVariables=NA,
+                          mortalityColumn,
                           outDir,
                           runName,
                           predictP,
@@ -92,13 +96,32 @@ mortalityStan <- function(mortData,
   numMod <- length(modelsToRun)
   modelTables <- list()
   matrixAll <- list()
-  mortData <- rename(mortData, y = !!aliveColumn)
-  if(!is.null(predData))predData <- mutate(predData, y = 1)
+  mortData <- rename(mortData, y = !!mortalityColumn)%>%
+   mutate(across(all_of(factorVariables),factor))
+  if(sum(!is.na(numericVariables))>0) {
+    mortData<-mortData %>%
+      mutate(across(all_of(numericVariables),BycatchEstimator:::as.numeric2))
+
+  }
+  if(!is.null(predData))  {
+    predData <- mutate(predData, y = 1)    %>%
+      mutate(across(all_of(factorVariables),factor))
+    for(i in factorVariables)       {
+      predData[i]<-factor(predData[[i]],levels=levels(mortData[[i]]))
+    }
+    if(sum(!is.na(numericVariables))>0)
+      predData<-predData %>%
+        mutate(across(all_of(numericVariables),BycatchEstimator:::as.numeric2))
+  }
+  if(is.null(predData) & predictP) {
+    predData<-mortData
+  }
   for (i in 1:numMod) {
     mod1 <- lm(formula = formula(modelsToRun[i]), data = mortData)
     modelTables[[i]] <- model.matrix(mod1)
-    if (predictP)
+    if (predictP) {
       matrixAll[[i]] <- model.matrix(formula(mod1), data = predData)
+    }
   }
   stanRuns <- list()
   waicList <- list()
@@ -148,7 +171,7 @@ mortalityStan <- function(mortData,
                     inputs =list(mortData=mortData,
                                  predData = predData,
                                  modelsToRun = modelsToRun,
-                                 aliveColumn = aliveColumn,
+                                 mortalityColumn = mortalityColumn,
                                  outDir =  outDir,
                                  runName = runName,
                                  predictP = predictP,
@@ -194,6 +217,7 @@ standardizeToObsdat <- function(obsdat, newdat, numericVariables = NULL) {
 #' @export
 #'
 plotMortalityFunc <- function(modelyrSum1, Species) {
+  modelyrSum1<-mutate(modelyrSum1,Year=as.numeric(as.character(Year)))
   ggplot(
     filter(modelyrSum1,Outcome %in% c("Bycatch","Mortality")),
     aes(
@@ -202,7 +226,8 @@ plotMortalityFunc <- function(modelyrSum1, Species) {
       fill = Outcome,
       color = Outcome,
       ymin = lower,
-      ymax = upper
+      ymax = upper,
+      group = Outcome
     )
   ) +
     geom_line() +
@@ -783,7 +808,8 @@ getBycatchDraws<-function(stanSum,
 #' @param modeledEffort TRUE if effort is drawn from a distribution
 #' @param effortSD Name of column with effort data
 #' @param useCode cmdstanr or rsta
-#' @param mortResults stan run of motality model
+#' @param mortResults stan run of mortality model
+#' @param flipMort True if estimated probablity of survival and want mortality or vs/vs
 #' @param mortModelNum mortality model number to use
 #' @param nsim Number of draws needed
 #' @param summaryVariables Defaults to Year to get annual bycatch mortality
@@ -806,7 +832,7 @@ getMortPred <- function(stanSum,
                         summaryVariables="Year") {
   BycatchVars <- as.vector(getAllTerms(formula(stanSum$waictab$Model[modelNum])))
   MortVars <- as.vector(getAllTerms(formula(mortResults$waictab$Model[mortModelNum])))
-  RequiredVars<-c(BycatchVars,MortVars)
+  RequiredVars<-c(BycatchVars,MortVars,summaryVariables)
   RequiredVars<-unique(RequiredVars[!RequiredVars %in% "Species"])
   ggb <- getBycatchDraws(stanSum=stanSum,
                          modelNum=modelNum,
@@ -817,7 +843,7 @@ getMortPred <- function(stanSum,
                          effortSD = effortSD,
                          useCode,
                          nsim=nsim)
-  mortRun<- mortResults$stanRuns[[mortResults$waictab$Dwaic==0]]
+  mortRun<- mortResults$stanRuns[[mortModelNum]]
   mortPredDat<-mortResults$inputs$predData %>%
     mutate(row=row_number())
   if(useCode=="rstan") ggm <- extract(mortRun, pars = "strataProb")$strataProb
@@ -829,7 +855,7 @@ getMortPred <- function(stanSum,
     select(-.draw,-.chain,-.iteration) %>%
     pivot_longer(cols=contains("strataProb"),
                  names_to="Parameter",
-                 values_to="Mortality") %>%
+                 values_to="Probability") %>%
     separate_wider_delim(Parameter,"[",names=c("temp","row")) %>%
     mutate(row=as.numeric(gsub("]","",row))) %>%
     left_join(mortPredDat,by="row")
@@ -841,8 +867,8 @@ getMortPred <- function(stanSum,
   modelyrSum1 <- gg1 %>% group_by_at(all_of(c(summaryVariables,"iterations"))) %>%
     summarize(
       Bycatch = sum(bycatch),
-      MorProb = mean(Mortality),
-      Mortality = sum(bycatch * Mortality)
+      Probability = mean(Probability),
+      Mortality = sum(bycatch * Probability)
     ) %>%
     ungroup() %>%
     pivot_longer(Bycatch:Mortality,
@@ -859,3 +885,23 @@ getMortPred <- function(stanSum,
   modelyrSum1
 }
 
+#' plotPPCMortality
+#' A function to plot Prior and Posterior predictive checks of a binomial model
+#'
+#' @param y  Mortality data column from original data
+#' @param modelNum Which model number to use
+#' @param mortalityStanList The list of rstan or cmdstanr fit objects
+#' @param useCode "cmdstanr" or "rstan"
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+plotPPCMortality<-function(y,
+                           modelNum,
+                           mortalityStanList,
+                           useCode)  {
+  if(useCode=="rstan") Yrep <- extract(mortalityStanList[[modelNum]], pars = "Yrep")$Yrep
+  if(useCode=="cmdstanr") Yrep <- mortalityStanList[[modelNum]]$draws("Yrep",format="matrix")
+  ppc_dens_overlay(y=y,Yrep[sample(1:nrow(Yrep),50),])+ggtitle("Posterior predictive plot")
+}

@@ -37,11 +37,11 @@ plotPriorPosteriorSims(
 
 - modeledEffort:
 
-  TRE if effort is drawn from a normal
+  TRUE if effort is drawn from a normal
 
 - effortSD:
 
-  Effort SD column in obsdat if drawing from noraml
+  Effort SD column in obsdat if drawing from normal
 
 - useCode:
 

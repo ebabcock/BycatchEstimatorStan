@@ -48,7 +48,9 @@ Function to run binomial stan models to estimate probability of survival</p>
 <span>  <span class="va">mortData</span>,</span>
 <span>  predData <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">modelsToRun</span>,</span>
-<span>  <span class="va">aliveColumn</span>,</span>
+<span>  factorVariables <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  numericVariables <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  <span class="va">mortalityColumn</span>,</span>
 <span>  <span class="va">outDir</span>,</span>
 <span>  <span class="va">runName</span>,</span>
 <span>  <span class="va">predictP</span>,</span>
@@ -61,19 +63,19 @@ Function to run binomial stan models to estimate probability of survival</p>
 
 
 <dl><dt id="arg-mortdata">mortData<a class="anchor" aria-label="anchor" href="#arg-mortdata"></a></dt>
-<dd><p>Data frame to fit model with a variable called alive with 1 for survive, 0 for dead plus predictor varialbes.</p></dd>
+<dd><p>Data frame to fit model with a variable called mortality with 1 for dead, 0 for alive plus predictor variables.</p></dd>
 
 
 <dt id="arg-preddata">predData<a class="anchor" aria-label="anchor" href="#arg-preddata"></a></dt>
-<dd><p>Data frame to predict mortalities for if desired</p></dd>
+<dd><p>Data frame to predict mortalities for if desired. If null, uses all distinct rows of the fitting data</p></dd>
 
 
 <dt id="arg-modelstorun">modelsToRun<a class="anchor" aria-label="anchor" href="#arg-modelstorun"></a></dt>
 <dd><p>Character vector of models</p></dd>
 
 
-<dt id="arg-alivecolumn">aliveColumn<a class="anchor" aria-label="anchor" href="#arg-alivecolumn"></a></dt>
-<dd><p>Name of column containing 1/0 for alive/dead</p></dd>
+<dt id="arg-mortalitycolumn">mortalityColumn<a class="anchor" aria-label="anchor" href="#arg-mortalitycolumn"></a></dt>
+<dd><p>Name of column containing 1/0 for dead/alive</p></dd>
 
 
 <dt id="arg-outdir">outDir<a class="anchor" aria-label="anchor" href="#arg-outdir"></a></dt>
@@ -90,6 +92,14 @@ Function to run binomial stan models to estimate probability of survival</p>
 
 <dt id="arg-usecode">useCode<a class="anchor" aria-label="anchor" href="#arg-usecode"></a></dt>
 <dd><p>character string: cmdstanr or rstan</p></dd>
+
+
+<dt id="arg-factorvariables">FactorVariables<a class="anchor" aria-label="anchor" href="#arg-factorvariables"></a></dt>
+<dd><p>Variables to interpret as categorical</p></dd>
+
+
+<dt id="arg-numericvariables">Numericvariables<a class="anchor" aria-label="anchor" href="#arg-numericvariables"></a></dt>
+<dd><p>Variable to interpret as numerical</p></dd>
 
 </dl></div>
 

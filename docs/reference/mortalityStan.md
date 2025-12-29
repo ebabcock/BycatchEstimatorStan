@@ -10,7 +10,9 @@ mortalityStan(
   mortData,
   predData = NULL,
   modelsToRun,
-  aliveColumn,
+  factorVariables = NA,
+  numericVariables = NA,
+  mortalityColumn,
   outDir,
   runName,
   predictP,
@@ -22,20 +24,21 @@ mortalityStan(
 
 - mortData:
 
-  Data frame to fit model with a variable called alive with 1 for
-  survive, 0 for dead plus predictor varialbes.
+  Data frame to fit model with a variable called mortality with 1 for
+  dead, 0 for alive plus predictor variables.
 
 - predData:
 
-  Data frame to predict mortalities for if desired
+  Data frame to predict mortalities for if desired. If null, uses all
+  distinct rows of the fitting data
 
 - modelsToRun:
 
   Character vector of models
 
-- aliveColumn:
+- mortalityColumn:
 
-  Name of column containing 1/0 for alive/dead
+  Name of column containing 1/0 for dead/alive
 
 - outDir:
 
@@ -52,3 +55,11 @@ mortalityStan(
 - useCode:
 
   character string: cmdstanr or rstan
+
+- FactorVariables:
+
+  Variables to interpret as categorical
+
+- Numericvariables:
+
+  Variable to interpret as numerical

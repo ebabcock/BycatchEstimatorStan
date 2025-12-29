@@ -9,7 +9,9 @@ mortalityStan(
   mortData,
   predData = NULL,
   modelsToRun,
-  aliveColumn,
+  factorVariables = NA,
+  numericVariables = NA,
+  mortalityColumn,
   outDir,
   runName,
   predictP,
@@ -17,13 +19,13 @@ mortalityStan(
 )
 }
 \arguments{
-\item{mortData}{Data frame to fit model with a variable called alive with 1 for survive, 0 for dead plus predictor varialbes.}
+\item{mortData}{Data frame to fit model with a variable called mortality with 1 for dead, 0 for alive plus predictor variables.}
 
-\item{predData}{Data frame to predict mortalities for if desired}
+\item{predData}{Data frame to predict mortalities for if desired. If null, uses all distinct rows of the fitting data}
 
 \item{modelsToRun}{Character vector of models}
 
-\item{aliveColumn}{Name of column containing 1/0 for alive/dead}
+\item{mortalityColumn}{Name of column containing 1/0 for dead/alive}
 
 \item{outDir}{output directory}
 
@@ -32,6 +34,10 @@ mortalityStan(
 \item{predictP}{TRUE/FALSE, do we want to predict to new data?}
 
 \item{useCode}{character string: cmdstanr or rstan}
+
+\item{FactorVariables}{Variables to interpret as categorical}
+
+\item{Numericvariables}{Variable to interpret as numerical}
 }
 \description{
 mortalityStan

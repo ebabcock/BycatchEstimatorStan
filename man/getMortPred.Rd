@@ -28,7 +28,7 @@ getMortPred(
 
 \item{stanObj}{Stan model ouput for bycatch model}
 
-\item{setupObj}{Daa setup object}
+\item{setupObj}{Data setup object}
 
 \item{modeledEffort}{TRUE if effort is drawn from a distribution}
 
@@ -36,13 +36,15 @@ getMortPred(
 
 \item{useCode}{cmdstanr or rsta}
 
-\item{mortResults}{stan run of motality model}
+\item{mortResults}{stan run of mortality model}
 
 \item{mortModelNum}{mortality model number to use}
 
 \item{nsim}{Number of draws needed}
 
 \item{summaryVariables}{Defaults to Year to get annual bycatch mortality}
+
+\item{flipMort}{True if estimated probablity of survival and want mortality or vs/vs}
 }
 \description{
 GetMorPred

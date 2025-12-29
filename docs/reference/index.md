@@ -34,6 +34,9 @@
 - [`plotMortalityFunc()`](https://ebabcock.github.io/BycatchEstimatorStan/reference/plotMortalityFunc.md)
   : plotMortalityFunc Function to plot both bycatch and bycatch
   mortality
+- [`plotPPCMortality()`](https://ebabcock.github.io/BycatchEstimatorStan/reference/plotPPCMortality.md)
+  : plotPPCMortality A function to plot Prior and Posterior predictive
+  checks of a binomial model
 - [`plotPriorPosterior()`](https://ebabcock.github.io/BycatchEstimatorStan/reference/plotPriorPosterior.md)
   : plotPriorPosterior
 - [`plotPriorPosteriorSims()`](https://ebabcock.github.io/BycatchEstimatorStan/reference/plotPriorPosteriorSims.md)

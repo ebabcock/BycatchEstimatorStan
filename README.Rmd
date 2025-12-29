@@ -5,4 +5,12 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-This is the code to run selected models, already set up with the BycatchEstimator package, in a Bayesian framework using STAN.
+This library runs a Bayesian version the model-based bycatch estimation procudure in the library BycatchEstimator. See the BycatchEstimator User's Guide for how to set up the data at https://ebabcock.github.io/BycatchEstimator/. The source code for the Bayesian version is at https://github.com/ebabcock/BycatchEstimatorStan. This library also fits a binomial GLM to estimate the probability of mortality at release, and estimates the total bycatch mortality See the user guide at https://ebabcock.github.io/BycatchEstimatorStan/ for details. The package is under development and may still have bugs. If you would like to use it, please contact ebabcock@miami.edu.
+ 
+To install, use the following code:
+
+```{r,eval=FALSE}
+# install.packages("devtools")
+devtools::install_github("ebabcock/BycatchEstimator")
+devtools::install_github("ebabcock/BycatchEstimatorStan")
+```

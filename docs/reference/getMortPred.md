@@ -41,7 +41,7 @@ getMortPred(
 
 - setupObj:
 
-  Daa setup object
+  Data setup object
 
 - modeledEffort:
 
@@ -57,7 +57,7 @@ getMortPred(
 
 - mortResults:
 
-  stan run of motality model
+  stan run of mortality model
 
 - mortModelNum:
 
@@ -70,3 +70,7 @@ getMortPred(
 - summaryVariables:
 
   Defaults to Year to get annual bycatch mortality
+
+- flipMort:
+
+  True if estimated probablity of survival and want mortality or vs/vs

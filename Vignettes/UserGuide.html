@@ -13,7 +13,7 @@
 
 <meta name="date" content="2025-12-29" />
 
-<title>BycatchEstimatorStan</title>
+<title>BycatchEstimatorStan User Guide</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -350,26 +350,185 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">BycatchEstimatorStan</h1>
+<h1 class="title toc-ignore">BycatchEstimatorStan User Guide</h1>
 <h4 class="author">Beth Babcock</h4>
 <h4 class="date">2025-12-29</h4>
 
 </div>
 
 
-<p>This library runs a Bayesian version the model-based bycatch
+<p>This library runs a Bayesian version of the model-based bycatch
 estimation procudure in the library BycatchEstimator. See the
 BycatchEstimator User’s Guide for how to set up the data at <a href="https://ebabcock.github.io/BycatchEstimator/" class="uri">https://ebabcock.github.io/BycatchEstimator/</a>. The source
-code for the Bayesian version is at <a href="https://github.com/ebabcock/BycatchEstimatorStan" class="uri">https://github.com/ebabcock/BycatchEstimatorStan</a>. This
-library also fits a binomial GLM to estimate the probability of
-mortality at release, and estimates the total bycatch mortality See the
-user guide at <a href="https://ebabcock.github.io/BycatchEstimatorStan/" class="uri">https://ebabcock.github.io/BycatchEstimatorStan/</a> for
-details. The package is under development and may still have bugs. If
-you would like to use it, please contact <a href="mailto:ebabcock@miami.edu" class="email">ebabcock@miami.edu</a>.</p>
+code is at <a href="https://github.com/ebabcock/BycatchEstimatorStan" class="uri">https://github.com/ebabcock/BycatchEstimatorStan</a> and the
+User’s Guide for the Bayesian version is at <a href="https://ebabcock.github.io/BycatchEstimatorStan/" class="uri">https://ebabcock.github.io/BycatchEstimatorStan/</a>.</p>
 <p>To install, use the following code:</p>
 <pre class="r"><code># install.packages(&quot;devtools&quot;)
 devtools::install_github(&quot;ebabcock/BycatchEstimator&quot;)
 devtools::install_github(&quot;ebabcock/BycatchEstimatorStan&quot;)</code></pre>
+<p>Open all the libraries</p>
+<pre class="r"><code>library(BycatchEstimator)
+library(MuMIn)
+library(BycatchEstimatorStan)</code></pre>
+<p>Run example code from BycatchEstimator</p>
+<pre class="r"><code>obsdat&lt;-droplevels(LLSIM_BUM_Example_observer[LLSIM_BUM_Example_observer$Year&gt;2014 &amp;LLSIM_BUM_Example_observer$fleet==2,])
+logdat&lt;-droplevels(LLSIM_BUM_Example_logbook[LLSIM_BUM_Example_logbook$Year&gt;2014 &amp; LLSIM_BUM_Example_logbook$fleet==2,])
+setupObjBUM&lt;-bycatchSetup(
+  obsdat = obsdat,
+  logdat = logdat,
+  yearVar = &quot;Year&quot;,
+  obsEffort = &quot;sets&quot;,
+  logEffort = &quot;sets&quot;,
+  factorVariables = c(&quot;Year&quot;,&quot;area&quot;),  
+  numericVariables = NA, 
+  EstimateBycatch = TRUE,
+  logNum = NA,
+  sampleUnit = &quot;trips&quot;,
+  baseDir = getwd(),
+  runName = &quot;LLSIMBUMtripExample&quot;,
+  runDescription = &quot;LLSIm BUM by trip, with 5% observer coverage&quot;,
+  common = &quot;Blue marlin&quot;,
+  sp = &quot;Makaira nigricans&quot;,
+  obsCatch =&quot;BUM&quot;,
+  catchUnit = &quot;number&quot;,
+  catchType = &quot;catch&quot;,
+  reportType = &quot;html&quot;  
+)</code></pre>
+<p>Look at the output html file to see whether there are any problems
+with your data setup.</p>
+<p>Now run BycatchStan</p>
+<pre class="r"><code>modelsToRun&lt;-c(&quot;y~Year&quot;,&quot;y~1&quot;)
+useCode=&quot;cmdstanr&quot;
+BUMRun&lt;-bycatchStanSim(setupObjBUM,
+                        modelsToRun=modelsToRun,
+                        spNum=1,  #which species to run in input is multispecies
+                        modeledEffort=FALSE,
+                        priors =  list(interceptSD=10,
+                                      coefficientSD=1,
+                                      phiType=c(&quot;exponential&quot;,&quot;normal&quot;)[1],
+                                      phiPar=1),
+                        StanOutDir=NULL,  #Null to use base directory from SetupObj
+                        useCode=useCode)</code></pre>
+<p>The bycatchStanSim function prints its output to an rds file, so you
+can read it back in later to make plots and look at diagnostics.</p>
+<pre class="r"><code>#Specify directory with bycatch Estimator results
+outDir&lt;-setupObjBUM$bycatchInputs$outDir
+# Date of bycatch estimator run
+estimatorDate&lt;-Sys.Date()
+# Date of stan run
+stanDate&lt;-Sys.Date()
+# Read in bycatchEstimator setup
+setupObj&lt;-readRDS(paste0(outDir,&quot;/&quot;,estimatorDate,&quot;_BycatchSetupSpecification.rds&quot;))
+spNum&lt;-1
+#Stan output directory
+StanOutDir&lt;-paste0(outDir,&quot;/&quot;,&quot;Bluemarlincatch&quot;)
+# Read in stan run summary files
+stanSum&lt;-readRDS(paste0(StanOutDir,
+                         &quot;/STAN&quot;,stanDate,&quot;StanOutputs.rds&quot;))</code></pre>
+<p>The following code takes either the output that was just read in or
+the outputs from this section and looks at more diagnostics.</p>
+<pre class="r"><code>#Choose outputs to use
+stanSum&lt;-BUMRun
+setupObj&lt;-setupObjBUM</code></pre>
+<p>Plot the annual bycatch estimates</p>
+<pre class="r"><code>plotStan(stanSum$yearSum)</code></pre>
+<p>Here is the model selection table</p>
+<pre class="r"><code>stanSum$waictab</code></pre>
+<p>Pick AIC best model</p>
+<pre class="r"><code>modelNum&lt;-which(stanSum$waictab$Dwaic==0) #To get WAIC best</code></pre>
+<p>Read in the corresponding Stan model object (these are deleted from
+the environment to save space)</p>
+<pre class="r"><code>stanObj&lt;-readRDS(BUMRun$stanRunFiles[[modelNum]])</code></pre>
+<p>Plot residuals</p>
+<pre class="r"><code>getResiduals(stanSum, 
+             stanObj,
+             modelNum,
+             setupObj,
+             useCode=useCode)</code></pre>
+<p>Plot prior and posterior densities of parameters</p>
+<pre class="r"><code>plotPriorPosterior(stanSum, 
+                   stanObj,
+                   useCode=useCode) </code></pre>
+<p>Plot prior and posterior draws of bycatch</p>
+<pre class="r"><code>plotPriorPosteriorSims(stanSum=stanSum,
+                       modelNum=modelNum,
+                       stanObj=stanObj,
+                       setupObj=setupObj,
+                       modeledEffort = FALSE,
+                       effortSD = NULL,
+                       useCode=useCode)  </code></pre>
+<p>Convergence diagnostics</p>
+<pre class="r"><code>getConvergence(stanObj,
+               useCode=useCode)</code></pre>
+<p>Parameter summary table</p>
+<pre class="r"><code>getSummary(stanSum,
+           stanObj,
+           modelNum,
+           setupObj,
+           spNum=1,
+           useCode=useCode) </code></pre>
+<p>Code to run survival/mortality model</p>
+<p>With simulated survival data (arbitrary values). If there are any
+numerical variables, they need to be standardized using the mean and sd
+from the observer data for consistency. This data has year as a
+category, so standardization is not needed.</p>
+<pre class="r"><code>mortData&lt;-read.csv(&quot;data/SimulatedMortality.csv&quot;)</code></pre>
+<p>Run multiple models to get the best one. Doesn’t calculate predicted
+probability of survival (predictP=FALSE)</p>
+<pre class="r"><code>modelsToRun=c(&quot;y~1&quot;,&quot;y~Species&quot;,&quot;y~Year&quot;,&quot;y~Year+Species&quot;)
+MortResults&lt;-mortalityStan(mortData=mortData,
+                          predData = NULL,
+                          modelsToRun=modelsToRun,
+                          factorVariables=c(&quot;Species&quot;,&quot;Year&quot;),
+                          numericVariables=NA,
+                          mortalityColumn=&quot;dead&quot;,
+                          outDir=getwd(),
+                          runName=&quot;Simulated&quot;,
+                          predictP=FALSE,
+                          useCode=useCode  
+)</code></pre>
+<p>The outputs include the model selection and diagnostics tables.</p>
+<pre class="r"><code>MortResults$waictab
+MortResults$diagTable
+mortModelNum&lt;-which(MortResults$waictab$Dwaic==0)</code></pre>
+<p>This function will give posterior predictive checks for the
+probability model.</p>
+<pre class="r"><code>plotPPCMortality(y=mortData$dead,
+                       modelNum=1,
+                       mortalityStanList=MortResults$stanRuns,
+                       useCode=useCode)  </code></pre>
+<p>With predictions for each year for BUM, best model only</p>
+<pre class="r"><code>predData&lt;-obsdat %&gt;%
+  distinct(Year)%&gt;%
+  mutate(Species=&quot;BUM&quot;)
+predData
+MortResultsP&lt;-mortalityStan(mortData=mortData,
+                           predData = predData,
+                           modelsToRun=modelsToRun[mortModelNum],
+                           factorVariables=c(&quot;Species&quot;,&quot;Year&quot;),
+                           numericVariables=NA,
+                           mortalityColumn=&quot;dead&quot;,
+                           outDir=getwd(),
+                           runName=&quot;Simulated&quot;,
+                           predictP=TRUE,  
+                           useCode=useCode  
+)</code></pre>
+<p>Combine mortality and bycatch estimate to get bycatch mortality or
+survival</p>
+<p>Estimates total bycatch mortality</p>
+<pre class="r"><code>mortalityEsts&lt;-getMortPred(stanSum=stanSum,
+                           modelNum=which(stanSum$waictab$Dwaic==0),
+                           stanObj=stanObj,
+                           Species=&quot;BUM&quot;,
+                           setupObj=setupObj,
+                           modeledEffort = FALSE,
+                           effortSD = NULL,
+                           useCode=useCode,
+                           mortResults=MortResultsP,
+                          mortModelNum=1)
+
+plotMortalityFunc(mortalityEsts,Species=&quot;BUM&quot;)
+head(mortalityEsts)</code></pre>
 
 
 
