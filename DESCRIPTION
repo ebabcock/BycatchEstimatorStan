@@ -1,4 +1,4 @@
-Package: bycatchEstimatorStan
+Package: BycatchEstimatorStan
 Title: Bayesian Bycatch Estimation with STAN
 Version: 0.0.0.9000
 Authors@R: 

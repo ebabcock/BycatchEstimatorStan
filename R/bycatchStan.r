@@ -80,14 +80,14 @@ mortalityStan <- function(mortData,
                           predictP,
                           useCode
                           ) {
+  binomialMod<-stan_path("binomial.stan")
+  binomialModP<-stan_path("binomialP.stan")
   if(useCode=="rstan") {
     require(rstan)
     rstan_options(auto_write = TRUE)
   }
   if(useCode=="cmdstanr") {
     require(cmdstanr)
-    binomialMod<-cmdstan_model("stan/binomial.stan")
-    binomialModP<-cmdstan_model("stan/binomialP.stan")
   }
   require(loo)
   if (!dir.exists(outDir))
@@ -127,11 +127,11 @@ mortalityStan <- function(mortData,
   waicList <- list()
   diagList <- list()
   if (predictP)  {
-    if(useCode=="rstan") mod <- stan_model(file = "R/binomialP.stan")
-    if(useCode=="cmdstanr") mod <- binomialModP
+    if(useCode=="rstan") mod <- stan_model(binomialModP)
+    if(useCode=="cmdstanr") mod <- cmdstan_model(binomialModP)
   }  else  {
-    if(useCode=="rstan") mod <- stan_model(file = "R/binomial.stan")
-    if(useCode=="cmdstanr") mod <- binomialMod
+    if(useCode=="rstan") mod <- stan_model(binomialMod)
+    if(useCode=="cmdstanr") mod <- cmdstan_model(binomialMod)
     }
   for (i in 1:numMod) {
     if (predictP) {
@@ -281,8 +281,8 @@ bycatchStanSim <- function(setupObj,
   if(useCode=="rstan") require(rstan)
   if(useCode=="cmdstanr") {
     require(cmdstanr)
-    NB2matrixNoEffort <- cmdstan_model("stan/NB2matrixNoEffort.stan")
-    NB2matrixNoEffort1 <- cmdstan_model("stan/NB2matrixNoEffort1.stan")
+    NB2matrixNoEffort <- cmdstan_model(stan_path("NB2matrixNoEffort.stan"))
+    NB2matrixNoEffort1 <- cmdstan_model(stan_path("NB2matrixNoEffort1.stan"))
   }
   if(!useCode %in% c("rstan","cmdstanr")) stop("Must specify rstan or cmdstanr")
   require(loo)
@@ -348,7 +348,8 @@ bycatchStanSim <- function(setupObj,
         Effort = obsdat$Effort
       )
       if(useCode=="rstan") {
-        stanRun <- stan(file = "stan/NB2matrixNoEffort1.stan", data = dataList,
+        stanRun <- stan(file = stan_path("NB2matrixNoEffort1.stan"),
+                        data = dataList,
                         pars=c("b0","phi","LL"))
       }
       if(useCode=="cmdstanr")  {
@@ -368,7 +369,8 @@ bycatchStanSim <- function(setupObj,
         phiPar=priors$phiPar
       )
       if(useCode=="rstan") {
-        stanRun <- stan(file = "stan/NB2matrixNoEffort.stan", data = dataList,
+        stanRun <- stan(file = stan_path("NB2matrixNoEffort.stan"),
+                        data = dataList,
                         pars=c("b0","b","phi","LL"))
       }
       if(useCode=="cmdstanr")  {
@@ -904,4 +906,19 @@ plotPPCMortality<-function(y,
   if(useCode=="rstan") Yrep <- extract(mortalityStanList[[modelNum]], pars = "Yrep")$Yrep
   if(useCode=="cmdstanr") Yrep <- mortalityStanList[[modelNum]]$draws("Yrep",format="matrix")
   ppc_dens_overlay(y=y,Yrep[sample(1:nrow(Yrep),50),])+ggtitle("Posterior predictive plot")
+}
+
+
+#' stan_path
+#'
+#' @param file  Name of stan file to use
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+stan_path <- function(file) {
+  path <- system.file("stan", file, package = "BycatchEstimatorStan")
+  if (!nzchar(path)) stop("Stan file not found: ", file)
+  path
 }
