@@ -12,7 +12,7 @@ transformed parameters{
   logitmu = xMatrix*b;
 }
 model{
-  b~normal(0,10);
+  b~normal(0,4);
   Y~bernoulli_logit(logitmu);
 }
 generated quantities {
