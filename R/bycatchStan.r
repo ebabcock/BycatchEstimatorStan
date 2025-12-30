@@ -23,8 +23,8 @@ getIC <- function(mod1,useCode) {
   if(useCode=="rstan")  LL1 <- extract_log_lik(mod1, "LL")
   if(useCode=="cmdstanr") LL1 <-mod1$draws("LL")
   waicval <- waic(LL1)$estimates
-  looval <- loo(LL1)$estimates
-  c(waic = waicval[3, 1], looic = looval[3, 1],numHighK=sum(looval$diagnostics$pareto_k>0.7),maxK=max(looval$diagnostics$pareto_k>0.7))
+  looval <- loo(LL1)
+  c(waic = waicval[3, 1], looic = looval$estimates[3, 1],numHighK=sum(looval$diagnostics$pareto_k>0.7),maxK=max(looval$diagnostics$pareto_k))
 }
 
 #' plotStan
