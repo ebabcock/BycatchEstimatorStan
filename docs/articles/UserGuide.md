@@ -29,7 +29,9 @@ library(MuMIn)
 library(BycatchEstimatorStan)
 ```
 
-Run example code from BycatchEstimator
+### Model bycatch rate
+
+Run with example data from BycatchEstimator
 
 ``` r
 obsdat<-droplevels(LLSIM_BUM_Example_observer[LLSIM_BUM_Example_observer$Year>2014 &LLSIM_BUM_Example_observer$fleet==2,])
@@ -179,7 +181,9 @@ getSummary(stanSum,
            useCode=useCode) 
 ```
 
-Code to run survival/mortality model
+### Modeling probability of mortality
+
+Code to run survival/mortality model.
 
 With simulated survival data (arbitrary values). If there are any
 numerical variables, they need to be standardized using the mean and sd
@@ -246,6 +250,8 @@ MortResultsP<-mortalityStan(mortData=mortData,
 )
 ```
 
+### Calculating bycatch mortality
+
 Combine mortality and bycatch estimate to get bycatch mortality or
 survival
 
@@ -266,6 +272,8 @@ mortalityEsts<-getMortPred(stanSum=stanSum,
 plotMortalityFunc(mortalityEsts,Species="BUM")
 head(mortalityEsts)
 ```
+
+### References
 
 Gabry, Jonah, Rok Češnovar, Andrew Johnson, and Steve Bronder. 2025.
 *Cmdstanr: R Interface to ’CmdStan’*. <https://mc-stan.org/cmdstanr/>.

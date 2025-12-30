@@ -51,3 +51,5 @@
   : standardizeToObsdat Function to standardize numeric variables to
   means and variances from obsdat Apply this to logdat so that
   predictions will be correct if using numerical variables
+- [`stan_path()`](https://ebabcock.github.io/BycatchEstimatorStan/reference/stan_path.md)
+  : stan_path

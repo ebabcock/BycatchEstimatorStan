@@ -5,6 +5,7 @@
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/authors.html</loc></url>
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/index.html</loc></url>
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/bycatchEstimatorStan-package.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/bycatchEstimatorStan.html</loc></url>
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/bycatchStanSim.html</loc></url>
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getBycatchDraws.html</loc></url>
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/getBycatchSim.html</loc></url>
@@ -23,5 +24,6 @@
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/plotStan.html</loc></url>
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/priorSimulation.html</loc></url>
 <url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/standardizeToObsdat.html</loc></url>
+<url><loc>https://ebabcock.github.io/BycatchEstimatorStan/reference/stan_path.html</loc></url>
 </urlset>
 
