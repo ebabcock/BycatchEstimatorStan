@@ -2,17 +2,15 @@
 % Please edit documentation in R/bycatchStan.r
 \name{bycatchStanSim}
 \alias{bycatchStanSim}
-\title{bycatchStanSim
-Function to run a set of negative binomial stan models to estimate bycatch
-taking a bycatchEstimator setup object as an input, and using simulation for effort if needed}
+\title{bycatchStanSim}
 \usage{
 bycatchStanSim(
   setupObj,
   modelsToRun = NULL,
   spNum = 1,
   stanModel = "nbinom2",
-  priors = list(interceptSD = 10, coefficientSD = 1, phiType = c("exponential",
-    "normal")[1], phiPar = 1),
+  priors = list(interceptSD = 4, coefficientSD = 1, phiType = c("exponential",
+    "normal")[1], phiPar = 1, RanEffPar = 1),
   modeledEffort = FALSE,
   effortSD = NULL,
   predictionInterval = TRUE,
@@ -47,7 +45,6 @@ and a vector with paths of the .rds files containing the individual model stan f
 annual bycatch estimates suitable for plotting
 }
 \description{
-bycatchStanSim
 Function to run a set of negative binomial stan models to estimate bycatch
-taking a bycatchEstimator setup object as an input, and using simulation for effort if needed
+taking a bycatchEstimator setup object as an input
 }

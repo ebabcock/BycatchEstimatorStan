@@ -14,8 +14,8 @@ getMortPred(
   modeledEffort = FALSE,
   effortSD = NULL,
   useCode,
-  mortResults,
-  mortModelNum,
+  mortResults = NULL,
+  mortModelNum = NULL,
   nsim = 1000,
   summaryVariables = "Year"
 )
@@ -33,7 +33,7 @@ getMortPred(
 
 - Species:
 
-  Species
+  Species name
 
 - stanObj:
 
@@ -53,7 +53,7 @@ getMortPred(
 
 - useCode:
 
-  cmdstanr or rsta
+  cmdstanr or rstan
 
 - mortResults:
 
@@ -73,4 +73,4 @@ getMortPred(
 
 - flipMort:
 
-  True if estimated probablity of survival and want mortality or vs/vs
+  True if estimated probability of survival and want mortality or vs/vs

@@ -1,8 +1,7 @@
-# bycatchStanSim Function to run a set of negative binomial stan models to estimate bycatch taking a bycatchEstimator setup object as an input, and using simulation for effort if needed
+# bycatchStanSim
 
-bycatchStanSim Function to run a set of negative binomial stan models to
-estimate bycatch taking a bycatchEstimator setup object as an input, and
-using simulation for effort if needed
+Function to run a set of negative binomial stan models to estimate
+bycatch taking a bycatchEstimator setup object as an input
 
 ## Usage
 
@@ -12,8 +11,8 @@ bycatchStanSim(
   modelsToRun = NULL,
   spNum = 1,
   stanModel = "nbinom2",
-  priors = list(interceptSD = 10, coefficientSD = 1, phiType = c("exponential",
-    "normal")[1], phiPar = 1),
+  priors = list(interceptSD = 4, coefficientSD = 1, phiType = c("exponential",
+    "normal")[1], phiPar = 1, RanEffPar = 1),
   modeledEffort = FALSE,
   effortSD = NULL,
   predictionInterval = TRUE,

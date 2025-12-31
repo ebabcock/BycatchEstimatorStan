@@ -16,8 +16,8 @@ getBycatchSim(
   predictionInterval = predictionInterval,
   nsim = 1000,
   usePrior = FALSE,
-  priors = list(interceptSD = 10, coefficientSD = 1, phiType = c("exponential",
-    "normal")[1], phiPar = 1),
+  priors = list(interceptSD = 4, coefficientSD = 1, phiType = c("exponential",
+    "normal")[1], phiPar = 1, raneffPar = 1),
   returnDraws = FALSE,
   useCode = "cmdstanr"
 )

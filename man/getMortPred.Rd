@@ -13,8 +13,8 @@ getMortPred(
   modeledEffort = FALSE,
   effortSD = NULL,
   useCode,
-  mortResults,
-  mortModelNum,
+  mortResults = NULL,
+  mortModelNum = NULL,
   nsim = 1000,
   summaryVariables = "Year"
 )
@@ -24,7 +24,7 @@ getMortPred(
 
 \item{modelNum}{Row in waictab}
 
-\item{Species}{Species}
+\item{Species}{Species name}
 
 \item{stanObj}{Stan model ouput for bycatch model}
 
@@ -34,7 +34,7 @@ getMortPred(
 
 \item{effortSD}{Name of column with effort data}
 
-\item{useCode}{cmdstanr or rsta}
+\item{useCode}{cmdstanr or rstan}
 
 \item{mortResults}{stan run of mortality model}
 
@@ -44,7 +44,7 @@ getMortPred(
 
 \item{summaryVariables}{Defaults to Year to get annual bycatch mortality}
 
-\item{flipMort}{True if estimated probablity of survival and want mortality or vs/vs}
+\item{flipMort}{True if estimated probability of survival and want mortality or vs/vs}
 }
 \description{
 GetMorPred

@@ -23,9 +23,7 @@ devtools::install_github("ebabcock/BycatchEstimatorStan")
 ## All functions
 
 - [`bycatchStanSim()`](https://ebabcock.github.io/BycatchEstimatorStan/reference/bycatchStanSim.md)
-  : bycatchStanSim Function to run a set of negative binomial stan
-  models to estimate bycatch taking a bycatchEstimator setup object as
-  an input, and using simulation for effort if needed
+  : bycatchStanSim
 - [`getBycatchDraws()`](https://ebabcock.github.io/BycatchEstimatorStan/reference/getBycatchDraws.md)
   : getBycatchDraws.
 - [`getBycatchSim()`](https://ebabcock.github.io/BycatchEstimatorStan/reference/getBycatchSim.md)

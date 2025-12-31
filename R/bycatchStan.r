@@ -10,6 +10,7 @@ require(readxl)
 require(bayesplot)
 require(ggsci)
 require(flextable)
+require(reformulas)
 theme_set(theme_bw())
 
 #' getIC
@@ -117,7 +118,7 @@ mortalityStan <- function(mortData,
     predData<-mortData
   }
   for (i in 1:numMod) {
-    mod1 <- lm(formula = formula(modelsToRun[i]), data = mortData)
+    mod1 <- lm(formula = formula(nobars(formula(modelsToRun[i]))), data = mortData)
     modelTables[[i]] <- model.matrix(mod1)
     if (predictP) {
       matrixAll[[i]] <- model.matrix(formula(mod1), data = predData)
@@ -243,8 +244,9 @@ plotMortalityFunc <- function(modelyrSum1, Species) {
 
 
 #' bycatchStanSim
+#'
 #' Function to run a set of negative binomial stan models to estimate bycatch
-#' taking a bycatchEstimator setup object as an input, and using simulation for effort if needed
+#' taking a bycatchEstimator setup object as an input
 #'
 #' @param setupObj List output from a rund of BycatchEstimator::bycatchSetup
 #' @param modelsToRun Character vector of models to run, e.g. c("y~Year","y~1")
@@ -268,10 +270,11 @@ bycatchStanSim <- function(setupObj,
                            spNum = 1,
                            #which of the species to run from multispecies setuObj
                            stanModel = "nbinom2",
-                           priors =  list(interceptSD=10,
+                           priors =  list(interceptSD=4,
                                           coefficientSD=1,
                                           phiType=c("exponential","normal")[1],
-                                          phiPar=1),
+                                          phiPar=1,
+                                          RanEffPar=1),
                            modeledEffort = FALSE,
                            effortSD = NULL,
                            predictionInterval=TRUE,
@@ -279,11 +282,7 @@ bycatchStanSim <- function(setupObj,
                            useCode="cmdstanr") {
   if (is.null(effortSD) & modeledEffort)      stop("Must supply the name of the effortSD column if using estimated effort")
   if(useCode=="rstan") require(rstan)
-  if(useCode=="cmdstanr") {
-    require(cmdstanr)
-    NB2matrixNoEffort <- cmdstan_model(stan_path("NB2matrixNoEffort.stan"))
-    NB2matrixNoEffort1 <- cmdstan_model(stan_path("NB2matrixNoEffort1.stan"))
-  }
+  if(useCode=="cmdstanr") require(cmdstanr)
   if(!useCode %in% c("rstan","cmdstanr")) stop("Must specify rstan or cmdstanr")
   require(loo)
   options(mc.cores = parallel::detectCores())
@@ -324,7 +323,7 @@ bycatchStanSim <- function(setupObj,
   obsdat <- mutate(obsdat, y = 1)
   logdat <- mutate(logdat, y = 1)
   for (i in 1:numMod) {
-    mod1 <- lm(formula = formula(modelsToRun[i]), data = obsdat)
+    mod1 <- lm(formula = formula(nobars(formula(modelsToRun[i]))), data = obsdat)
     modelTables[[i]] <- model.matrix(mod1)
     matrixAll[[i]] <- model.matrix(formula(mod1), data = logdat)
   }
@@ -337,7 +336,8 @@ bycatchStanSim <- function(setupObj,
   if(!dir.exists(dirVal))
     dir.create(paste0(dirVal), recursive = TRUE)
   for (i in 1:numMod) {
-    if(modelsToRun[i] == "y~1") {
+    RanEffs<-findbars(formula(modelsToRun[i]))
+    if(formula(modelsToRun[i]) == formula("y~1")) {
       dataList <- list(
         Y = obsdat[[obsCatch[spNum]]],
         N = nrow(modelTables[[i]]),
@@ -353,10 +353,12 @@ bycatchStanSim <- function(setupObj,
                         pars=c("b0","phi","LL"))
       }
       if(useCode=="cmdstanr")  {
+        NB2matrixNoEffort1 <- cmdstan_model(stan_path("NB2matrixNoEffort1.stan"))
         stanRun<-NB2matrixNoEffort1$sample(data=dataList,
                                            refresh=0)
       }
-    } else {
+    }
+    if(!(formula(modelsToRun[i]) == formula("y~1")) & is.null(RanEffs)){
       dataList <- list(
         Y = obsdat[[obsCatch[spNum]]],
         N = nrow(modelTables[[i]]),
@@ -374,7 +376,47 @@ bycatchStanSim <- function(setupObj,
                         pars=c("b0","b","phi","LL"))
       }
       if(useCode=="cmdstanr")  {
+        NB2matrixNoEffort <- cmdstan_model(stan_path("NB2matrixNoEffort.stan"))
         stanRun<-NB2matrixNoEffort$sample(data=dataList,
+                                          refresh=0)
+      }
+    }
+    if(!is.null(RanEffs)){
+      levels_re<-NULL
+      names_re<-NULL
+      for (k in 1:length(RanEffs)) {
+          names_re[k] <- deparse(RanEffs[[k]][[3]])
+          obsdat[[names_re[k]]]<-as.integer(factor(obsdat[[names_re[k]]]))
+          logdat[[names_re[k]]]<-as.integer(factor(logdat[[names_re[k]]]))
+          levels_re[k]    <- length(unique(obsdat[[names_re[k]]]))
+      }
+      RenEfTotalLevels<-sum(levels_re)
+      RanEfStart<-c(1,cumsum(levels_re))[1:length(levels_re)]
+      dataList <- list(
+        Y = obsdat[[obsCatch[spNum]]],
+        N = nrow(modelTables[[i]]),
+        Ncoef = ncol(modelTables[[i]]) - 1,
+        Effort = obsdat$Effort,
+        xMatrix = as.matrix(modelTables[[i]][, -1]),
+        interceptSD = priors$interceptSD,
+        coefficientSD = priors$coefficientSD,
+        RanEffPar=priors$RanEffPar,
+        NumRanEf=length(RanEffs),
+        RanEfStart=RanEfStart,
+        RanEfLevels=levels_re,
+        RenEfTotalLevels= RenEfTotalLevels,
+        XRanEfLevels=as.matrix(as.data.frame(obsdat)[[names_re]]),
+        phiType=ifelse(priors$phiType=="normal",2,1),
+        phiPar=priors$phiPar
+      )
+      if(useCode=="rstan") {
+        stanRun <- stan(file = stan_path("NB2matrixNoEffortRandom.stan"),
+                        data = dataList,
+                        pars=c("b0","b","phi","LL","sigma","sigmaRanEf"))
+      }
+      if(useCode=="cmdstanr")  {
+        NB2matrixNoEffortRandom <- cmdstan_model(stan_path("NB2matrixNoEffortRandom.stan"))
+        stanRun<-NB2matrixNoEffortRandom$sample(data=dataList,
                                           refresh=0)
       }
     }
@@ -467,10 +509,11 @@ getBycatchSim <- function(mod1,
                           predictionInterval=predictionInterval,
                           nsim = 1000,
                           usePrior=FALSE,
-                          priors = list(interceptSD=10,
+                          priors = list(interceptSD=4,
                                         coefficientSD=1,
                                         phiType=c("exponential","normal")[1],
-                                        phiPar=1),
+                                        phiPar=1,
+                                        raneffPar=1),
                           returnDraws=FALSE,
                           useCode="cmdstanr") {
   bvals<-NULL
@@ -804,14 +847,14 @@ getBycatchDraws<-function(stanSum,
 #'
 #' @param stanSum  WAIC table
 #' @param modelNum Row in waictab
-#' @param Species Species
+#' @param Species Species name
 #' @param stanObj Stan model ouput for bycatch model
 #' @param setupObj Data setup object
 #' @param modeledEffort TRUE if effort is drawn from a distribution
 #' @param effortSD Name of column with effort data
-#' @param useCode cmdstanr or rsta
+#' @param useCode cmdstanr or rstan
 #' @param mortResults stan run of mortality model
-#' @param flipMort True if estimated probablity of survival and want mortality or vs/vs
+#' @param flipMort True if estimated probability of survival and want mortality or vs/vs
 #' @param mortModelNum mortality model number to use
 #' @param nsim Number of draws needed
 #' @param summaryVariables Defaults to Year to get annual bycatch mortality
@@ -828,8 +871,8 @@ getMortPred <- function(stanSum,
                         modeledEffort = FALSE,
                         effortSD = NULL,
                         useCode,
-                        mortResults,
-                        mortModelNum,
+                        mortResults=NULL,
+                        mortModelNum=NULL,
                         nsim=1000,
                         summaryVariables="Year") {
   BycatchVars <- as.vector(getAllTerms(formula(stanSum$waictab$Model[modelNum])))
@@ -845,27 +888,31 @@ getMortPred <- function(stanSum,
                          effortSD = effortSD,
                          useCode,
                          nsim=nsim)
-  mortRun<- mortResults$stanRuns[[mortModelNum]]
-  mortPredDat<-mortResults$inputs$predData %>%
-    mutate(row=row_number())
-  if(useCode=="rstan") ggm <- extract(mortRun, pars = "strataProb")$strataProb
-  if(useCode=="cmdstanr") ggm <- mortRun$draws(variables="strataProb",format="df")
-  ggm<-ggm %>%
-    as.data.frame() %>%
-    slice_sample(n=nsim)%>%
-    mutate(iterations=1:nsim)%>%
-    select(-.draw,-.chain,-.iteration) %>%
-    pivot_longer(cols=contains("strataProb"),
-                 names_to="Parameter",
-                 values_to="Probability") %>%
-    separate_wider_delim(Parameter,"[",names=c("temp","row")) %>%
-    mutate(row=as.numeric(gsub("]","",row))) %>%
-    left_join(mortPredDat,by="row")
-  if("Year" %in% RequiredVars) {
+  if(!is.null(mortResults)) {
+    mortRun<- mortResults$stanRuns[[mortModelNum]]
+    mortPredDat<-mortResults$inputs$predData %>%
+      mutate(row=row_number())
+    if(useCode=="rstan") ggm <- extract(mortRun, pars = "strataProb")$strataProb
+    if(useCode=="cmdstanr") ggm <- mortRun$draws(variables="strataProb",format="df")
+    ggm<-ggm %>%
+      as.data.frame() %>%
+      slice_sample(n=nsim)%>%
+      mutate(iterations=1:nsim)%>%
+      select(-.draw,-.chain,-.iteration) %>%
+      pivot_longer(cols=contains("strataProb"),
+                   names_to="Parameter",
+                   values_to="Probability") %>%
+      separate_wider_delim(Parameter,"[",names=c("temp","row")) %>%
+      mutate(row=as.numeric(gsub("]","",row))) %>%
+      left_join(mortPredDat,by="row")
+    if("Year" %in% RequiredVars) {
     ggm$Year<-as.numeric(as.character(ggm$Year))
     ggb$Year<-as.numeric(as.character(ggb$Year))
+    }
+    gg1 <- left_join(ggb, ggm, by = c(RequiredVars, "iterations"))
+  } else {
+    gg1<-ggb %>% mutate(Probability=NA)
   }
-  gg1 <- left_join(ggb, ggm, by = c(RequiredVars, "iterations"))
   modelyrSum1 <- gg1 %>% group_by_at(all_of(c(summaryVariables,"iterations"))) %>%
     summarize(
       Bycatch = sum(bycatch),
@@ -886,6 +933,7 @@ getMortPred <- function(stanSum,
     )
   modelyrSum1
 }
+
 
 #' plotPPCMortality
 #' A function to plot Prior and Posterior predictive checks of a binomial model
