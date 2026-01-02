@@ -4,7 +4,6 @@ data{
  array[N] int Y;
  real interceptSD;
  real coefficientSD;
- int phiType;
  real phiPar;
  vector[N] Effort;
  matrix[N,Ncoef] xMatrix;
@@ -20,11 +19,7 @@ transformed parameters{
 model{
   b0~normal(0,interceptSD);
   b~normal(0,coefficientSD);
-  if(phiType==1) {
-    phi~exponential(phiPar);
-  }  else  {
-    phi~normal(0,phiPar);
-  }
+  phi~normal(0,phiPar);
   Y~neg_binomial_2_log(logmu,phi);
 }
 generated quantities {

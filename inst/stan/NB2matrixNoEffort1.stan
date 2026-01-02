@@ -13,10 +13,7 @@ parameters{
 }
 transformed parameters{
   vector[N] logmu;
-  vector[N] mu;
-  for(i in 1:N) {
-   logmu[i] = b0;
-   mu[i] = exp(logmu[i])*Effort[i];
+  logmu = logmu + log(Effort);
   }
 }
 model{
@@ -26,14 +23,12 @@ model{
   }  else  {
     phi~normal(0,phiPar);
   }
-  Y~neg_binomial_2(mu,phi);
+  Y~neg_binomial_2_log(logmu,phi);
 }
 generated quantities {
   array[N] real LL;
-  array[N] real Yrep;
   for(i in 1:N) {
-   Yrep[i] = neg_binomial_2_rng(mu[i],phi);
-   LL[i] = neg_binomial_2_lpmf(Y[i]|mu[i],phi);
+   LL[i] = neg_binomial_2_log_lpmf(Y[i]|logmu[i],phi);
   }
 }
 

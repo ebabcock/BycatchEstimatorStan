@@ -3,28 +3,19 @@ data{
  int Ncoef;
  array[N] int Y;
  real interceptSD;
- real coefficientSD;
- int phiType;
  real phiPar;
  vector[N] Effort;
- matrix[N,Ncoef] xMatrix;
 }
 parameters{
  real  b0;
- vector[Ncoef] b;
  real<lower=0.00001,upper=100> phi;
 }
 transformed parameters{
-  vector[N] logmu = b0 + xMatrix * b + log(Effort);
+  vector[N] logmu = b0 +  log(Effort);
 }
 model{
   b0~normal(0,interceptSD);
-  b~normal(0,coefficientSD);
-  if(phiType==1) {
-    phi~exponential(phiPar);
-  }  else  {
-    phi~normal(0,phiPar);
-  }
+  phi~exponential(phiPar);
   Y~neg_binomial_2_log(logmu,phi);
 }
 generated quantities {
@@ -33,6 +24,8 @@ generated quantities {
    LL[i] = neg_binomial_2_log_lpmf(Y[i]|logmu[i],phi);
   }
 }
+
+
 
 
 

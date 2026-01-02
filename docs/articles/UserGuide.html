@@ -58,7 +58,7 @@
                         <h4 data-toc-skip class="author">Elizabeth A.
 Babcock</h4>
             
-            <h4 data-toc-skip class="date">2025-12-31</h4>
+            <h4 data-toc-skip class="date">2026-01-02</h4>
       
 
       <div class="d-none name"><code>UserGuide.Rmd</code></div>
@@ -161,7 +161,8 @@ the outputs from this section and looks at more diagnostics.</p>
 <code class="sourceCode R"><span><span class="va">stanSum</span><span class="op">$</span><span class="va">waictab</span></span></code></pre></div>
 <p>Pick AIC best model</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">modelNum</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">stanSum</span><span class="op">$</span><span class="va">waictab</span><span class="op">$</span><span class="va">Dwaic</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="co">#To get WAIC best</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">modelNum</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">stanSum</span><span class="op">$</span><span class="va">waictab</span><span class="op">$</span><span class="va">Dwaic</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="co">#To get WAIC best</span></span>
+<span><span class="va">modelNum</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">stanSum</span><span class="op">$</span><span class="va">waictab</span><span class="op">$</span><span class="va">Dlooic</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="co">#To get LOOIC best (recommended)</span></span></code></pre></div>
 <p>Read in the corresponding Stan model object (these are deleted from
 the environment to save space)</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">

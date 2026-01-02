@@ -124,6 +124,7 @@ Pick AIC best model
 
 ``` r
 modelNum<-which(stanSum$waictab$Dwaic==0) #To get WAIC best
+modelNum<-which(stanSum$waictab$Dlooic==0) #To get LOOIC best (recommended)
 ```
 
 Read in the corresponding Stan model object (these are deleted from the

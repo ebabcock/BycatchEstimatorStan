@@ -28,6 +28,7 @@ getIC <- function(mod1,useCode) {
   c(waic = waicval[3, 1], looic = looval$estimates[3, 1],numHighK=sum(looval$diagnostics$pareto_k>0.7),maxK=max(looval$diagnostics$pareto_k))
 }
 
+
 #' plotStan
 #' Function to plot annual total bycatch from the annual summary table
 #'
@@ -284,6 +285,7 @@ bycatchStanSim <- function(setupObj,
   if(useCode=="rstan") require(rstan)
   if(useCode=="cmdstanr") require(cmdstanr)
   if(!useCode %in% c("rstan","cmdstanr")) stop("Must specify rstan or cmdstanr")
+  if(!priors$phiType %in% c("exponential","normal")) stop("Phi parameter prior type must be normal or exponential")
   require(loo)
   options(mc.cores = parallel::detectCores())
   # To keep a compiled version of the code so you don't have to recompile
@@ -295,7 +297,6 @@ bycatchStanSim <- function(setupObj,
    dat<-numSp<-yearSum<-allVarNames<-startYear<-strataSum<-shortName<-NULL
    for(r in 1:NROW(setupObj$bycatchInputs)) assign(names(setupObj$bycatchInputs)[r], setupObj$bycatchInputs[[r]])
    if(all(is.na(numericVariables))) numericVariables<-NULL
-
   if(is.null(StanOutDir))
     StanOutDir <- outDir
   if(!dir.exists(StanOutDir))
@@ -342,24 +343,25 @@ bycatchStanSim <- function(setupObj,
         Y = obsdat[[obsCatch[spNum]]],
         N = nrow(modelTables[[i]]),
         interceptSD=priors$interceptSD,
-        phiType=ifelse(priors$phiType=="normal",2,1),
         phiPar=priors$phiPar,
         Ncoef = ncol(modelTables[[i]]) - 1,
         Effort = obsdat$Effort
       )
+      if(priors$phiType=="exponential") stanModelPath<-stan_path("NB2matrixPhiExp1.stan")
+      if(priors$phiType=="normal") stanModelPath<-stan_path("NB2matrixPhiNorm1.stan")
       if(useCode=="rstan") {
-        stanRun <- stan(file = stan_path("NB2matrixNoEffort1.stan"),
+        stanRun <- stan(file = stanModelPath,
                         data = dataList,
-                        pars=c("b0","phi","LL"))
+                        pars=c("b0","phi"))
       }
       if(useCode=="cmdstanr")  {
-        NB2matrixNoEffort1 <- cmdstan_model(stan_path("NB2matrixNoEffort1.stan"))
+        NB2matrixNoEffort1 <- cmdstan_model(stanModelPath)
         stanRun<-NB2matrixNoEffort1$sample(data=dataList,
                                            refresh=0)
       }
     }
     if(!(formula(modelsToRun[i]) == formula("y~1")) & is.null(RanEffs)){
-      dataList <- list(
+       dataList <- list(
         Y = obsdat[[obsCatch[spNum]]],
         N = nrow(modelTables[[i]]),
         Ncoef = ncol(modelTables[[i]]) - 1,
@@ -367,21 +369,22 @@ bycatchStanSim <- function(setupObj,
         xMatrix = as.matrix(modelTables[[i]][, -1]),
         interceptSD = priors$interceptSD,
         coefficientSD = priors$coefficientSD,
-        phiType=ifelse(priors$phiType=="normal",2,1),
-        phiPar=priors$phiPar
-      )
+        phiPar=priors$phiPar)
+      if(priors$phiType=="exponential") stanModelPath<-stan_path("NB2matrixPhiExp.stan")
+      if(priors$phiType=="normal") stanModelPath<-stan_path("NB2matrixPhiNorm.stan")
       if(useCode=="rstan") {
-        stanRun <- stan(file = stan_path("NB2matrixNoEffort.stan"),
+        stanRun <- stan(file = stanModelPath,
                         data = dataList,
-                        pars=c("b0","b","phi","LL"))
+                        pars=c("b0","b","phi"))
       }
       if(useCode=="cmdstanr")  {
-        NB2matrixNoEffort <- cmdstan_model(stan_path("NB2matrixNoEffort.stan"))
+        NB2matrixNoEffort <- cmdstan_model(stanModelPath)
         stanRun<-NB2matrixNoEffort$sample(data=dataList,
                                           refresh=0)
       }
     }
     if(!is.null(RanEffs)){
+      stop("random effects not yet working")
       levels_re<-NULL
       names_re<-NULL
       for (k in 1:length(RanEffs)) {
@@ -420,7 +423,8 @@ bycatchStanSim <- function(setupObj,
                                           refresh=0)
       }
     }
-    waicList[[i]] <- getIC(stanRun,useCode)
+    waicList[[i]] <- getIC(stanRun,
+                                 useCode)
     names(waicList)[i] <- modelsToRun[i]
     modelYearSum[[i]] <- getBycatchSim(
       stanRun,
@@ -664,7 +668,8 @@ plotPriorPosteriorSims<-function(stanSum,
   logdat<-setupObj$bycatchInput$logdat %>%
     mutate(y=1,
            Year1=Year)
-  matrixAll<-model.matrix(formula(stanSum$waictab$Model[modelNum]),data=logdat)
+  matrixAll<-model.matrix(formula(stanSum$waictab$Model[modelNum]),
+                          data=logdat)
   postvals<-getBycatchSim(stanObj,
                           logdat,
                           matrixAll,
