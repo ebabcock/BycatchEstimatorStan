@@ -352,7 +352,7 @@ bycatchStanSim <- function(setupObj,
       if(useCode=="rstan") {
         stanRun <- stan(file = stanModelPath,
                         data = dataList,
-                        pars=c("b0","phi"))
+                        pars=c("b0","phi","LL"))
       }
       if(useCode=="cmdstanr")  {
         NB2matrixNoEffort1 <- cmdstan_model(stanModelPath)
@@ -375,7 +375,7 @@ bycatchStanSim <- function(setupObj,
       if(useCode=="rstan") {
         stanRun <- stan(file = stanModelPath,
                         data = dataList,
-                        pars=c("b0","b","phi"))
+                        pars=c("b0","b","phi","LL"))
       }
       if(useCode=="cmdstanr")  {
         NB2matrixNoEffort <- cmdstan_model(stanModelPath)
@@ -445,7 +445,7 @@ bycatchStanSim <- function(setupObj,
         rownames_to_column(var = "Parameter")
     if(useCode=="cmdstanr") diagList[[i]] <- stanRun$summary(variables = pars)
     names(diagList)[i] <- modelsToRun[i]
-    stanRunFiles[i] <- paste0(dirVal,"/", sp, spNum, "run", i, "-", Sys.Date(), ".rds")
+    stanRunFiles[i] <- paste0(dirVal,"/", "sp", spNum, "run", i, "-", Sys.Date(), ".rds")
     #print(stanRunFiles[i])
     if(useCode=="rstan") saveRDS(stanRun, file = stanRunFiles[i])
     if(useCode=="cmdstanr") stanRun$save_object(file = stanRunFiles[i])
