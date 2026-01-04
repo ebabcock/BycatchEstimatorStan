@@ -20,6 +20,9 @@ theme_set(theme_bw())
 #' @param mod1 rstan or cmndstanr object
 #' @param useCode value "cmdstanr" or "rstan" to indicate code used in fit
 #'
+#' @export
+#'
+
 getIC <- function(mod1,useCode) {
   if(useCode=="rstan")  LL1 <- extract_log_lik(mod1, "LL")
   if(useCode=="cmdstanr") LL1 <-mod1$draws("LL")
@@ -249,7 +252,7 @@ plotMortalityFunc <- function(modelyrSum1, Species) {
 #' Function to run a set of negative binomial stan models to estimate bycatch
 #' taking a bycatchEstimator setup object as an input
 #'
-#' @param setupObj List output from a rund of BycatchEstimator::bycatchSetup
+#' @param setupObj List output from a run of BycatchEstimator::bycatchSetup
 #' @param modelsToRun Character vector of models to run, e.g. c("y~Year","y~1")
 #' @param spNum Number of the species in the original bycatchSetup run,
 #' @param stanModel Type of likelihood to use, currently only negative binomial 2
@@ -487,7 +490,7 @@ getMeanNbinom<-function(SampleUnits,MeanVals,phiVals) {
 
 #' getBycatchSim
 #' Function to calculate total bycatch from one stan model object
-#' simulating the catches in R not stan, with prediction interval generated with GetMeanNbinom
+#' simulating the catches in R not stan, with prediction interval
 #'
 #' @param mod1 stan fit object from cmdstanr or rstan
 #' @param logdat Total effort data for expanding over
@@ -528,8 +531,7 @@ getBycatchSim <- function(mod1,
     if(priors$phiType=="normal")
       phivals=truncnorm::rtruncnorm(nsim, a=0, b=Inf, mean = 0, sd = priors$phiPar) else
     phivals<-rexp(nsim,priors$phiPar)
-  }
-  else {
+  } else {
     if(useCode=="rstan") b0vals <- extract(mod1, pars = "b0")$b0
     if(useCode=="cmdstanr") b0vals <- mod1$draws(variables="b0",format = "df")$b0
     subsetval <- sample(1:length(b0vals), nsim)
@@ -556,13 +558,23 @@ getBycatchSim <- function(mod1,
   }
   if(predictionInterval) {
   simVal<-data.frame(SampleUnits=rep(logdat$SampleUnits,nsim),
-                     MeanVals=as.vector(simMean) * Effort,
-                     phiVals=rep(phivals, each = nrow(logdat))) %>%
-    rowwise() %>%
-    mutate(Bycatch=getMeanNbinom(SampleUnits,MeanVals,phiVals))
+                     MeanVals=as.vector(simMean)*Effort ,
+                     phiVals=rep(phivals, each = nrow(logdat)))%>%
+    mutate(Bycatch=rnbinom(n=prod(dim(simMean)),
+                           mu=MeanVals,
+                           size=phivals*SampleUnits))
   }  else {
     simVal<-data.frame(Bycatch=as.vector(simMean) * Effort)
   }
+  # if(predictionInterval) {
+  # simVal<-data.frame(SampleUnits=rep(logdat$SampleUnits,nsim),
+  #                    MeanVals=as.vector(simMean) * Effort,
+  #                    phiVals=rep(phivals, each = nrow(logdat))) %>%
+  #   rowwise() %>%
+  #   mutate(Bycatch=getMeanNbinom(SampleUnits,MeanVals,phiVals))
+  # }  else {
+  #   simVal<-data.frame(Bycatch=as.vector(simMean) * Effort)
+  # }
   gg1 <- data.frame(
     simVal = simVal$Bycatch,
     row = rep(1:nrow(logdat),nsim),
