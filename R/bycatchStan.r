@@ -437,7 +437,7 @@ bycatchStanSim <- function(setupObj,
       useCode=useCode
     )
     names(modelYearSum)[i] <- modelsToRun[i]
-    if (modelsToRun[i] == "y~1")
+    if(formula(modelsToRun[i]) == formula("y~1"))
       pars <- c("b0", "phi") else
       pars <- c("b0", "b", "phi")
     if(useCode=="rstan")
