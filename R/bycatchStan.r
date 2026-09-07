@@ -867,6 +867,7 @@ getBycatchDraws<-function(stanSum,
 #' @param mortModelNum mortality model number to use
 #' @param nsim Number of draws needed
 #' @param summaryVariables Defaults to Year to get annual bycatch mortality
+#' @importFrom MuMIn getAllTerms
 #'
 #' @returns Returns predicted mortality from bycatch and mortality models
 #' @export

@@ -16,6 +16,7 @@ export(plotPriorPosteriorSims)
 export(plotStan)
 export(stan_path)
 export(standardizeToObsdat)
+importFrom(MuMIn,getAllTerms)
 importFrom(bayesplot,ppc_dens_overlay)
 importFrom(ggmcmc,ggs)
 importFrom(reformulas,
