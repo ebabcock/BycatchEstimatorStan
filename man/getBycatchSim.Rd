@@ -4,7 +4,7 @@
 \alias{getBycatchSim}
 \title{getBycatchSim
 Function to calculate total bycatch from one stan model object
-simulating the catches in R not stan, with prediction interval generated with GetMeanNbinom}
+simulating the catches in R not stan, with prediction interval}
 \usage{
 getBycatchSim(
   mod1,
@@ -50,5 +50,5 @@ Returns lists of inputs and outputs
 \description{
 getBycatchSim
 Function to calculate total bycatch from one stan model object
-simulating the catches in R not stan, with prediction interval generated with GetMeanNbinom
+simulating the catches in R not stan, with prediction interval
 }

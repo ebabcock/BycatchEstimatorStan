@@ -19,7 +19,7 @@ bycatchStanSim(
 )
 }
 \arguments{
-\item{setupObj}{List output from a rund of BycatchEstimator::bycatchSetup}
+\item{setupObj}{List output from a run of BycatchEstimator::bycatchSetup}
 
 \item{modelsToRun}{Character vector of models to run, e.g. c("y~Year","y~1")}
 

@@ -4,6 +4,7 @@ export(bycatchStanSim)
 export(getBycatchDraws)
 export(getBycatchSim)
 export(getConvergence)
+export(getIC)
 export(getMortPred)
 export(getResiduals)
 export(getSummary)
@@ -15,3 +16,8 @@ export(plotPriorPosteriorSims)
 export(plotStan)
 export(stan_path)
 export(standardizeToObsdat)
+importFrom(ggmcmc,ggs)
+importFrom(reformulas,
+  findbars,
+  nobars
+)

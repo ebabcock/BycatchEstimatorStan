@@ -38,7 +38,7 @@ library(BycatchEstimatorStan)
 
 Run with example data from BycatchEstimator
 
-```{r, eval = evalOption}
+```{r, eval = evalOption,message=FALSE}
 obsdat<-droplevels(LLSIM_BUM_Example_observer[LLSIM_BUM_Example_observer$Year>2014 &LLSIM_BUM_Example_observer$fleet==2,])
 logdat<-droplevels(LLSIM_BUM_Example_logbook[LLSIM_BUM_Example_logbook$Year>2014 & LLSIM_BUM_Example_logbook$fleet==2,])
 setupObjBUM<-bycatchSetup(

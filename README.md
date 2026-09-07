@@ -14,7 +14,7 @@ to use it, please contact <ebabcock@miami.edu>.
 To install, use the following code:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("ebabcock/BycatchEstimator")
-devtools::install_github("ebabcock/BycatchEstimatorStan")
+# install.packages("pak")
+pak::pak("ebabcock/BycatchEstimator")
+pak::pak("ebabcock/BycatchEstimatorStan")
 ```

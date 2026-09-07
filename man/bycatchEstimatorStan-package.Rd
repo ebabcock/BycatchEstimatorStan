@@ -14,5 +14,10 @@ The code takes the output of BycatchEstimator's data setup and runs Bayesian byc
 \author{
 \strong{Maintainer}: Elizabeth Babcock \email{ebabcock@miami.edu}
 
+Authors:
+\itemize{
+  \item Elizabeth Babcock \email{ebabcock@miami.edu}
+}
+
 }
 \keyword{internal}
