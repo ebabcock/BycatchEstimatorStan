@@ -71,7 +71,7 @@ plotStan <- function(yearSum) {
 #' @param runName run name
 #' @param predictP TRUE/FALSE, do we want to predict to new data?
 #' @param useCode character string: cmdstanr or rstan
-#'
+#' @importFrom reformulas findbars nobars
 #' @export
 #'
 mortalityStan <- function(mortData,
@@ -262,7 +262,7 @@ plotMortalityFunc <- function(modelyrSum1, Species) {
 #' @param predictionInterval TRUE to esimate prediction interval rather than confidence interval
 #' @param StanOutDir Directory for output. NULL defaults to same directory as BycatchEstimator outputs
 #' @param useCode "stanr" or "cmdstanr"
-#'
+#' @importfrom reformulas findbars nobar
 #' @returns Returns lists of all the inputs, as well as a model summary table with LOOIC and WAIC values
 #' and a vector with paths of the .rds files containing the individual model stan files, and a dataframe of
 #' annual bycatch estimates suitable for plotting
@@ -630,7 +630,7 @@ priorSimulation<-function(stanObj,
 #' @param stanSum Output of bycatchStanSim
 #' @param stanObj Fitted cmdstanr or rstan object
 #' @param useCode "cmdstanr" or "rstan"
-#'
+#' @importFrom ggmcmc ggs
 #' @returns
 #' @export
 #'
