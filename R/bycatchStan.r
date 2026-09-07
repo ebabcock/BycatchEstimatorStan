@@ -959,6 +959,7 @@ getMortPred <- function(stanSum,
 #' @param modelNum Which model number to use
 #' @param mortalityStanList The list of rstan or cmdstanr fit objects
 #' @param useCode "cmdstanr" or "rstan"
+#' @importFrom bayesplot ppc_dens_overlay
 #'
 #' @returns
 #' @export
