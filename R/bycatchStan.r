@@ -262,7 +262,7 @@ plotMortalityFunc <- function(modelyrSum1, Species) {
 #' @param predictionInterval TRUE to esimate prediction interval rather than confidence interval
 #' @param StanOutDir Directory for output. NULL defaults to same directory as BycatchEstimator outputs
 #' @param useCode "stanr" or "cmdstanr"
-#' @importfrom reformulas findbars nobar
+#' @importFrom reformulas findbars nobars
 #' @returns Returns lists of all the inputs, as well as a model summary table with LOOIC and WAIC values
 #' and a vector with paths of the .rds files containing the individual model stan files, and a dataframe of
 #' annual bycatch estimates suitable for plotting

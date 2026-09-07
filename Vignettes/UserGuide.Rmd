@@ -191,7 +191,7 @@ Code to run survival/mortality model.
 With simulated survival data (arbitrary values). If there are any numerical variables, they need to be standardized using the mean and sd from the observer data for consistency. This data has year as a category, so standardization is not needed.
 
 ```{r, eval = evalOption,message=FALSE}
-mortData<-read.csv("data/SimulatedMortality.csv")
+mortData<-SimulatedMortality
 ```
 
 Run multiple models to get the best one. Doesn't calculate predicted probability of survival (predictP=FALSE)
