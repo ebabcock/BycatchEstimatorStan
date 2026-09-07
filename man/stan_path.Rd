@@ -9,6 +9,9 @@ stan_path(file)
 \arguments{
 \item{file}{Name of stan file to use}
 }
+\value{
+Path to stan file in package
+}
 \description{
 stan_path
 }

@@ -16,6 +16,9 @@ plotPPCMortality(y, modelNum, mortalityStanList, useCode)
 
 \item{useCode}{"cmdstanr" or "rstan"}
 }
+\value{
+PPC plot for the mortality output
+}
 \description{
 plotPPCMortality
 A function to plot Prior and Posterior predictive checks of a binomial model

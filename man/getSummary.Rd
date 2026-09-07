@@ -20,6 +20,9 @@ getSummary(stanSum, stanObj, modelNum, setupObj, spNum = 1, useCode)
 
 \item{useCode}{"cmdstanr" or "rstan"}
 }
+\value{
+A summary table of the parameter estimates
+}
 \description{
 getSummary
 Function to extract parameter summary table for coefficients and scale parameter

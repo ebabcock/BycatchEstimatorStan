@@ -7,6 +7,13 @@ Function for a random draw of size SampleUnits, summed to get the stratum estima
 \usage{
 getMeanNbinom(SampleUnits, MeanVals, phiVals)
 }
+\arguments{
+\item{SampleUnits}{Integer number of sample units in data}
+
+\item{MeanVals}{Mean parameter}
+
+\item{phiVals}{Shape parameter of negative binomial}
+}
 \description{
 getMeanNbinom
 Function for a random draw of size SampleUnits, summed to get the stratum estimate of bycatch.

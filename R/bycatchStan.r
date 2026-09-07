@@ -268,7 +268,6 @@ plotMortalityFunc <- function(modelyrSum1, Species) {
 #' annual bycatch estimates suitable for plotting
 #' @export
 #'
-#' @examples
 bycatchStanSim <- function(setupObj,
                            modelsToRun = NULL,
                            spNum = 1,
@@ -477,9 +476,9 @@ bycatchStanSim <- function(setupObj,
 #' getMeanNbinom
 #' Function for a random draw of size SampleUnits, summed to get the stratum estimate of bycatch.
 #'
-#' @param SampleUnits
-#' @param MeanVals
-#' @param phiVals
+#' @param SampleUnits Integer number of sample units in data
+#' @param MeanVals Mean parameter
+#' @param phiVals Shape parameter of negative binomial
 #'
 getMeanNbinom<-function(SampleUnits,MeanVals,phiVals) {
   if(SampleUnits>0 & !is.na(SampleUnits) & !is.na(MeanVals))
@@ -507,7 +506,6 @@ getMeanNbinom<-function(SampleUnits,MeanVals,phiVals) {
 #' @returns  Returns lists of inputs and outputs
 #' @export
 #'
-#' @examples
 getBycatchSim <- function(mod1,
                           logdat,
                           matrixAll,
@@ -631,10 +629,9 @@ priorSimulation<-function(stanObj,
 #' @param stanObj Fitted cmdstanr or rstan object
 #' @param useCode "cmdstanr" or "rstan"
 #' @importFrom ggmcmc ggs
-#' @returns
+#' @returns A plot of the prior and posterior distributions
 #' @export
 #'
-#' @examples
 plotPriorPosterior<-function(stanSum,
                              stanObj,
                              useCode) {
@@ -666,10 +663,9 @@ plotPriorPosterior<-function(stanSum,
 #' @param effortSD Effort SD column in obsdat if drawing from normal
 #' @param useCode "cmdstanr" or "rstan"
 #'
-#' @returns
+#' @returns A plot of the prior and posterior predictive checks
 #' @export
 #'
-#' @examples
 plotPriorPosteriorSims<-function(stanSum,
                                  modelNum,
                                  stanObj,
@@ -730,10 +726,9 @@ plotPriorPosteriorSims<-function(stanSum,
 #' @param spNum  Species number from bycatchSetup, generally 1
 #' @param useCode "cmdstanr" or "rstan"
 
-#' @returns
+#' @returns Dharma residual plots
 #' @export
 #'
-#' @examples
 getResiduals<-function(stanSum,stanObj,modelNum,setupObj,nsim=1000,spNum=1,useCode) {
   #require(rstan)
   require(DHARMa)
@@ -780,10 +775,9 @@ getResiduals<-function(stanSum,stanObj,modelNum,setupObj,nsim=1000,spNum=1,useCo
 #' @param spNum  Species number from bycatchSetup, generally 1
 #' @param useCode "cmdstanr" or "rstan"
 #'
-#' @returns
+#' @returns A summary table of the parameter estimates
 #' @export
 #'
-#' @examples
 getSummary<-function(stanSum,stanObj,modelNum,setupObj,spNum=1,useCode) {
   obsdat<-setupObj$bycatchInputs$obsdat
   obsdat$y<-1
@@ -805,7 +799,6 @@ getSummary<-function(stanSum,stanObj,modelNum,setupObj,spNum=1,useCode) {
 #' @returns Rstan convergence plots or cmdstanr number of diverenges,etc.
 #' @export
 #'
-#' @examples
 getConvergence<-function(stanObj,useCode) {
  if(useCode=="rstan") print(stan_diag(stanObj))
  if(useCode=="cmdstanr") {
@@ -828,7 +821,6 @@ getConvergence<-function(stanObj,useCode) {
 #' @returns Returns the posterior random draws of the bycatch estimate
 #' @export
 #'
-#' @examples
 getBycatchDraws<-function(stanSum,
                modelNum,
                stanObj,
@@ -876,10 +868,9 @@ getBycatchDraws<-function(stanSum,
 #' @param nsim Number of draws needed
 #' @param summaryVariables Defaults to Year to get annual bycatch mortality
 #'
-#' @returns
+#' @returns Returns predicted mortality from bycatch and mortality models
 #' @export
 #'
-#' @examples
 getMortPred <- function(stanSum,
                         modelNum,
                         Species,
@@ -961,10 +952,9 @@ getMortPred <- function(stanSum,
 #' @param useCode "cmdstanr" or "rstan"
 #' @importFrom bayesplot ppc_dens_overlay
 #'
-#' @returns
+#' @returns PPC plot for the mortality output
 #' @export
 #'
-#' @examples
 plotPPCMortality<-function(y,
                            modelNum,
                            mortalityStanList,
@@ -979,10 +969,9 @@ plotPPCMortality<-function(y,
 #'
 #' @param file  Name of stan file to use
 #'
-#' @returns
+#' @returns Path to stan file in package
 #' @export
 #'
-#' @examples
 stan_path <- function(file) {
   path <- system.file("stan", file, package = "BycatchEstimatorStan")
   if (!nzchar(path)) stop("Stan file not found: ", file)

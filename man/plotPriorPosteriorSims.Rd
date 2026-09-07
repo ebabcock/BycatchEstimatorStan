@@ -30,6 +30,9 @@ plotPriorPosteriorSims(
 
 \item{useCode}{"cmdstanr" or "rstan"}
 }
+\value{
+A plot of the prior and posterior predictive checks
+}
 \description{
 plotPriorPosteriorSims
 A function to plot Prior and Posterior predictive checks

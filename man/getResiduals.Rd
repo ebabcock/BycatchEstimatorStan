@@ -28,6 +28,9 @@ getResiduals(
 
 \item{useCode}{"cmdstanr" or "rstan"}
 }
+\value{
+Dharma residual plots
+}
 \description{
 getResiduals
 Function to plot quantile residuals from a cmdstanr or rstan fit, using DHARMa

@@ -13,6 +13,9 @@ plotPriorPosterior(stanSum, stanObj, useCode)
 
 \item{useCode}{"cmdstanr" or "rstan"}
 }
+\value{
+A plot of the prior and posterior distributions
+}
 \description{
 plotPriorPosterior
 }

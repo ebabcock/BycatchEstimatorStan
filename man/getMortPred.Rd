@@ -46,6 +46,9 @@ getMortPred(
 
 \item{flipMort}{True if estimated probability of survival and want mortality or vs/vs}
 }
+\value{
+Returns predicted mortality from bycatch and mortality models
+}
 \description{
 GetMorPred
 }
