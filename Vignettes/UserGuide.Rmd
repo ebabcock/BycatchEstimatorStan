@@ -14,7 +14,7 @@ header-includes:
 This library runs a Bayesian version of the model-based bycatch estimation procudure in the library BycatchEstimator. See the BycatchEstimator User's Guide for how to set up the data at https://ebabcock.github.io/BycatchEstimator/. The source code is at https://github.com/ebabcock/BycatchEstimatorStan and the User's Guide for the Bayesian version is at https://ebabcock.github.io/BycatchEstimatorStan/. 
 
 ```{r,include=FALSE}
-evalOption<-TRUE
+evalOption<-FALSE
 ```
 
 The code requires either cmdstanr (@cmdstanr) or rstan (@RStan) to run the MCMC algorithm, preferably cmdstanr. You must install cmdstanr before you install BycatchEstimatorStan, following the instructions here https://mc-stan.org/cmdstanr/. 
